@@ -13,7 +13,7 @@ namespace Daily.Planner.with.God.Application.Interfaces
         Task<ResponseMessage<List<Card>>> GetCardsAsync();
         Task<ResponseMessage<Card?>> GetCardAsync(Guid id);
         Task<ResponseMessage<Card>> CreateCardAsync(Card card);
-        Task<ResponseMessage<bool>> UpdateCardAsync(Guid id, Card card);
+        Task<ResponseMessage<bool>> UpdateCardAsync(Card card);
         Task<ResponseMessage<bool>> DeleteCardAsync(Guid id);
     }
 }

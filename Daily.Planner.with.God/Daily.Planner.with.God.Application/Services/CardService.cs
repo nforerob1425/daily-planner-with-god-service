@@ -18,7 +18,7 @@ namespace Daily.Planner.with.God.Application.Services
         {
             try
             {
-                return await _cardRepository.GetCardsAsync();
+                return await _cardRepository.GetAllAsync();
             }
             catch (Exception ex)
             {
@@ -31,7 +31,7 @@ namespace Daily.Planner.with.God.Application.Services
         {
             try
             {
-                return await _cardRepository.GetCardAsync(id);
+                return await _cardRepository.GetByIdAsync(id);
             }
             catch (Exception ex)
             {
@@ -43,7 +43,8 @@ namespace Daily.Planner.with.God.Application.Services
         {
             try
             {
-                return await _cardRepository.CreateCardAsync(card);
+                card.Id = Guid.NewGuid();
+                return await _cardRepository.CreateAsync(card);
             }
             catch (Exception ex)
             {
@@ -51,11 +52,11 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
-        public async Task<ResponseMessage<bool>> UpdateCardAsync(Guid id, Card card)
+        public async Task<ResponseMessage<bool>> UpdateCardAsync(Card card)
         {
             try
             {
-                return await _cardRepository.UpdateCardAsync(id, card);
+                return await _cardRepository.UpdateAsync(card);
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace Daily.Planner.with.God.Application.Services
         {
             try
             {
-                return await _cardRepository.DeleteCardAsync(id);
+                return await _cardRepository.DeleteAsync(id);
             }
             catch (Exception ex)
             {

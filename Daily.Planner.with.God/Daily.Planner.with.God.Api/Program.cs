@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Daily.Planner.with.God.Persistance;
-using Microsoft.Extensions.Options;
 using Daily.Planner.with.God.Persistance.Interfaces;
 using Daily.Planner.with.God.Persistance.Repositories;
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Application.Services;
-using Daily.Planner.with.God.Api.Controllers;
 
 internal class Program
 {
@@ -24,13 +22,28 @@ internal class Program
 
     private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        // Configurar Entity Framework Core con PostgreSQL
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Daily.Planner.with.God.Persistance")));
 
         services.AddScoped<ICardRepository, CardRepository>();
-        services.AddScoped<ICardService, CardService>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAdsRepository, AdsRepository>();
+        services.AddScoped<IAgendaRepository, AgendaRepository>();
+        services.AddScoped<IColorPalettRepository, ColorPalettRepository>();
+        services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<IRolRepository, RolRepository>();
+        services.AddScoped<ITypeRepository, TypeRepository>();
 
+        services.AddScoped<ICardService, CardService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAdsService, AdsService>();
+        services.AddScoped<IAgendaService, AgendaService>();
+        services.AddScoped<IColorPalettService, ColorPalettService>();
+        services.AddScoped<IConfigurationService, ConfigurationService>();
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IRolService, RolService>();
+        services.AddScoped<ITypeService, TypeService>();
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();

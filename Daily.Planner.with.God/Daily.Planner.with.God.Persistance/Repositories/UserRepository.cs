@@ -3,8 +3,8 @@ using Daily.Planner.with.God.Persistance.Interfaces;
 
 namespace Daily.Planner.with.God.Persistance.Repositories
 {
-    public class CardRepository : Repository<Card>, ICardRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
-        public CardRepository(ApplicationDbContext context) : base(context) { }
+        public UserRepository(ApplicationDbContext context) : base(context) { }
     }
 }

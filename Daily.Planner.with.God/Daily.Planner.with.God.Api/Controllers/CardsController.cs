@@ -40,9 +40,9 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ResponseMessage<bool>> UpdateCard(Guid id, Card card)
+        public async Task<ResponseMessage<bool>> UpdateCard(Card card)
         {
-            return await _cardService.UpdateCardAsync(id, card);
+            return await _cardService.UpdateCardAsync(card);
         }
 
         [HttpDelete("{id}")]
