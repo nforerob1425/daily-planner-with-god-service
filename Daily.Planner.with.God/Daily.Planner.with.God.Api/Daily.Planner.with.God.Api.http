@@ -1,0 +1,6 @@
+@Daily.Planner.with.God.Api_HostAddress = http://localhost:5077
+
+GET {{Daily.Planner.with.God.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
