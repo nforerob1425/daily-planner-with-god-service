@@ -52,6 +52,14 @@ internal class Program
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin",
+                builder => builder.WithOrigins("http://localhost:8080")
+                                  .AllowAnyHeader()
+                                  .AllowAnyMethod());
+        });
     }
 
     private static void ConfigureMiddleware(WebApplication app)
@@ -63,6 +71,7 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors("AllowSpecificOrigin");
         app.UseAuthorization();
         app.MapControllers();
     }
