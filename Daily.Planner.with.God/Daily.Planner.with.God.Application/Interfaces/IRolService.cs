@@ -8,10 +8,10 @@ namespace Daily.Planner.with.God.Application.Interfaces
 {
     public interface IRolService
     {
-        Task<ResponseMessage<List<Rol>>> GetRolesAsync();
-        Task<ResponseMessage<Rol?>> GetRoleAsync(Guid id);
-        Task<ResponseMessage<Rol>> CreateRoleAsync(Rol role);
-        Task<ResponseMessage<bool>> UpdateRoleAsync(Rol role);
+        Task<ResponseMessage<List<Role>>> GetRolesAsync();
+        Task<ResponseMessage<Role?>> GetRoleAsync(Guid id);
+        Task<ResponseMessage<Role>> CreateRoleAsync(Role role);
+        Task<ResponseMessage<bool>> UpdateRoleAsync(Role role);
         Task<ResponseMessage<bool>> DeleteRoleAsync(Guid id);
     }
 }

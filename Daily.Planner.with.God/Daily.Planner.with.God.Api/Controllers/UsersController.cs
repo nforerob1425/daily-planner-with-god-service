@@ -2,6 +2,7 @@
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Domain.Entities;
 using Daily.Planner.with.God.Common;
+using Daily.Planner.with.God.Application.Dtos;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
@@ -39,9 +40,21 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResponseMessage<User>>> CreateUser(User user)
+        public async Task<ActionResult<ResponseMessage<User>>> CreateUser(UserDto user)
         {
-            var response = await _userService.CreateUserAsync(user);
+            var userCreated = new User
+            {
+                Username = user.Username,
+                RoleId = user.RoleId,
+                Password = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                ConfigurationId = user.ConfigurationId,
+                LeadId = user.LeadId
+            };
+
+            var response = await _userService.CreateUserAsync(userCreated);
             if (response.Success)
             {
                 return CreatedAtAction(nameof(GetUser), new { id = response.Data.Id }, response);
@@ -50,9 +63,21 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> UpdateUser(User user)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateUser(UserDto user)
         {
-            var response = await _userService.UpdateUserAsync(user);
+            var userUpdated = new User
+            {
+                Username = user.Username,
+                RoleId = user.RoleId,
+                Password = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                ConfigurationId = user.ConfigurationId,
+                LeadId = user.LeadId
+            };
+
+            var response = await _userService.UpdateUserAsync(userUpdated);
             if (response.Success)
             {
                 return Ok(response);

@@ -12,8 +12,8 @@ namespace Daily.Planner.with.God.Domain.Entities
         [Key]
         public Guid Id { get; set; }
         public string Description { get; set; }
-        public Guid RolId { get; set; }
-        public Rol Rol { get; set; }
+        public Guid RoleId { get; set; }
+        public Role Rol { get; set; }
         public string SystemName { get; set; }
     }
 }

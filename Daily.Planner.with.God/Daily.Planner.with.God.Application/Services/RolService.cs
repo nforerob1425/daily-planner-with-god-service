@@ -17,7 +17,7 @@ namespace Daily.Planner.with.God.Application.Services
             _rolRepository = rolRepository;
         }
 
-        public async Task<ResponseMessage<List<Rol>>> GetRolesAsync()
+        public async Task<ResponseMessage<List<Role>>> GetRolesAsync()
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
-        public async Task<ResponseMessage<Rol?>> GetRoleAsync(Guid id)
+        public async Task<ResponseMessage<Role?>> GetRoleAsync(Guid id)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
-        public async Task<ResponseMessage<Rol>> CreateRoleAsync(Rol role)
+        public async Task<ResponseMessage<Role>> CreateRoleAsync(Role role)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
-        public async Task<ResponseMessage<bool>> UpdateRoleAsync(Rol role)
+        public async Task<ResponseMessage<bool>> UpdateRoleAsync(Role role)
         {
             try
             {

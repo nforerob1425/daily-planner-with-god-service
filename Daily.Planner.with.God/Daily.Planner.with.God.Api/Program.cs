@@ -4,6 +4,8 @@ using Daily.Planner.with.God.Persistance.Interfaces;
 using Daily.Planner.with.God.Persistance.Repositories;
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Application.Services;
+using AutoMapper;
+using Daily.Planner.with.God.Application.Mapper;
 
 internal class Program
 {
@@ -24,6 +26,8 @@ internal class Program
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Daily.Planner.with.God.Persistance")));
+
+        services.AddAutoMapper(typeof(MappingProfile));
 
         services.AddScoped<ICardRepository, CardRepository>();
         services.AddScoped<IUserRepository, UserRepository>();

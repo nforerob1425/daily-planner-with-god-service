@@ -48,7 +48,7 @@ namespace Daily.Planner.with.God.API.Controllers
             var result = await _typeService.UpdateTypeAsync(type);
             return Ok(result);
         }
-
+        
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseMessage<bool>>> DeleteType(Guid id)
         {

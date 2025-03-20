@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Daily.Planner.with.God.Domain.Entities
 {
-    public class Rol
+    public class Role
     {
         [Key]
         public Guid Id { get; set; }

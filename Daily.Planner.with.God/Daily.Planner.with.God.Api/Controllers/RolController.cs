@@ -20,28 +20,28 @@ namespace Daily.Planner.with.God.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseMessage<List<Rol>>>> GetRoles()
+        public async Task<ActionResult<ResponseMessage<List<Role>>>> GetRoles()
         {
             var result = await _rolService.GetRolesAsync();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseMessage<Rol?>>> GetRole(Guid id)
+        public async Task<ActionResult<ResponseMessage<Role?>>> GetRole(Guid id)
         {
             var result = await _rolService.GetRoleAsync(id);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResponseMessage<Rol>>> CreateRole(Rol role)
+        public async Task<ActionResult<ResponseMessage<Role>>> CreateRole(Role role)
         {
             var result = await _rolService.CreateRoleAsync(role);
             return CreatedAtAction(nameof(GetRole), new { id = result.Data.Id }, result);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> UpdateRole(Guid id, Rol role)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateRole(Guid id, Role role)
         {
             if (id != role.Id)
             {
