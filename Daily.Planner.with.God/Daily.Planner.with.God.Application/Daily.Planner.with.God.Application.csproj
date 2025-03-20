@@ -1,10 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Daily.Planner.with.God.Common\Daily.Planner.with.God.Common.csproj" />
+    <ProjectReference Include="..\Daily.Planner.with.God.Domain\Daily.Planner.with.God.Domain.csproj" />
+    <ProjectReference Include="..\Daily.Planner.with.God.Persistance\Daily.Planner.with.God.Persistance.csproj" />
+  </ItemGroup>
 
 </Project>
