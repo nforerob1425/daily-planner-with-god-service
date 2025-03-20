@@ -2,7 +2,6 @@
 using Daily.Planner.with.God.Application.Dtos;
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Common;
-using Daily.Planner.with.God.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daily.Planner.with.God.Api.Controllers
@@ -12,18 +11,64 @@ namespace Daily.Planner.with.God.Api.Controllers
     public class CardsController : ControllerBase
     {
         private readonly ICardService _cardService;
+        private readonly IColorPalettService _colorPalettService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public CardsController(ICardService cardService, IMapper mapper)
+        public CardsController(ICardService cardService, IMapper mapper, IColorPalettService colorPalettService, IUserService userService)
         {
             _cardService = cardService;
             _mapper = mapper;
+            _colorPalettService = colorPalettService;
+            _userService = userService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseMessage<List<Card>>>> GetCards()
+        public async Task<ActionResult<ResponseMessage<List<CardInfoDto>>>> GetCards()
         {
-            return await _cardService.GetCardsAsync();
+            var cards = await _cardService.GetCardsAsync();            
+            List<CardInfoDto> cardsDto = new List<CardInfoDto>();
+
+            foreach (var card in cards.Data)
+            {
+                var primaryColor = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorId);
+                var letterColor = await _colorPalettService.GetColorPalettAsync(card.LetterColorId);
+                var titleColor = await _colorPalettService.GetColorPalettAsync(card.TitleColorId);
+                var letterDateColor = await _colorPalettService.GetColorPalettAsync(card.LetterDateColorId);
+                var primaryColorDate = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorDateId);
+                var user = await _userService.GetUserAsync(card.OriginalUserId);
+
+                var cardDto = new CardInfoDto()
+                {
+                    Id = card.Id,
+                    CreateDate = card.CreateDate,
+                    MonthCreated = card.CreateDate.ToString("MMMM"),
+                    DayCreated = card.CreateDate.ToString("dd"),
+                    Title = card.Title,
+                    Content = card.Content,
+                    Favorite = card.Favorite,
+                    PrimaryColor = primaryColor.Data.Color,
+                    LetterColor = letterColor.Data.Color,
+                    TitleColor = titleColor.Data.Color,
+                    Versicle = card.Versicle,
+                    PrimaryColorDate = primaryColorDate.Data.Color,
+                    LetterDateColor = letterDateColor.Data.Color,
+                    UserId = card.UserId,
+                    AgendaId = card.AgendaId,
+                    OriginalUserFullName = string.Concat(user.Data.FirstName, " ", user.Data.LastName)
+                };
+
+                cardsDto.Add(cardDto);
+            }   
+
+            var response = new ResponseMessage<List<CardInfoDto>>
+            {
+                Data = cardsDto,
+                Message = cards.Message,
+                Success = cards.Success
+            };
+
+            return response;
         }
 
         [HttpGet("{id}")]
