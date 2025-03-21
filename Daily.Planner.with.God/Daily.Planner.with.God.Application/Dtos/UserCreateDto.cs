@@ -1,6 +1,6 @@
 ﻿namespace Daily.Planner.with.God.Application.Dtos
 {
-    public class UserDto
+    public class UserCreateDto
     {
         public Guid Id { get; set; }
         public string Username { get; set; }

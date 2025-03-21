@@ -2,11 +2,13 @@
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Common;
 using Type = Daily.Planner.with.God.Domain.Entities.Type;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Daily.Planner.with.God.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TypeController : ControllerBase
     {
         private readonly ITypeService _typeService;

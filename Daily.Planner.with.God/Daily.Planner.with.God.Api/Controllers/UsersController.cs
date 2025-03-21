@@ -3,11 +3,13 @@ using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Domain.Entities;
 using Daily.Planner.with.God.Common;
 using Daily.Planner.with.God.Application.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -40,13 +42,13 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResponseMessage<User>>> CreateUser(UserDto user)
+        public async Task<ActionResult<ResponseMessage<User>>> CreateUser(UserCreateDto user)
         {
             var userCreated = new User
             {
                 Username = user.Username,
                 RoleId = user.RoleId,
-                Password = user.Password,
+                Password = EncryptionHelper.EncryptString(user.Password),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -63,7 +65,7 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> UpdateUser(UserDto user)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateUser(UserCreateDto user)
         {
             var userUpdated = new User
             {

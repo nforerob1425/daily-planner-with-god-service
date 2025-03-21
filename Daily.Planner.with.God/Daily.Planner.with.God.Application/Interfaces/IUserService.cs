@@ -13,5 +13,6 @@ namespace Daily.Planner.with.God.Application.Interfaces
         Task<ResponseMessage<User>> CreateUserAsync(User user);
         Task<ResponseMessage<bool>> UpdateUserAsync(User user);
         Task<ResponseMessage<bool>> DeleteUserAsync(Guid id);
+        Task<User?> GetUserByUsernameAsync(string username);
     }
 }

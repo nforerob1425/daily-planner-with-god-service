@@ -4,6 +4,6 @@ namespace Daily.Planner.with.God.Persistance.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {
-        
+        Task<User?> GetUserByUserNameAsync(string username);
     }
 }

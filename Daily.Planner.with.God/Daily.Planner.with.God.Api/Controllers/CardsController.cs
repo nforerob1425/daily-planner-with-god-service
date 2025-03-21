@@ -2,12 +2,14 @@
 using Daily.Planner.with.God.Application.Dtos;
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CardsController : ControllerBase
     {
         private readonly ICardService _cardService;
