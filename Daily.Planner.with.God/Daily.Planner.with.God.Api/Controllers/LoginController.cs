@@ -30,13 +30,19 @@ namespace Daily.Planner.with.God.Api.Controllers
             try
             {
                 var user = await _userService.GetUserByUsernameAsync(loginRequest.Username);
-                var originPassword = EncryptionHelper.DecryptString(user.Password);
+                
 
-                if (user == null || originPassword != loginRequest.Password)
+                if (user == null)
                 {
                     return Unauthorized();
                 }
 
+                var originPassword = EncryptionHelper.DecryptString(user.Password);
+                if (originPassword != loginRequest.Password)
+                {
+                    return Unauthorized();
+                }
+                
                 var token = GenerateJwtToken(user);
 
                 var userInfo = new UserInfoDto
