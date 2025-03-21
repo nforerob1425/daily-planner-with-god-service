@@ -90,7 +90,7 @@ internal class Program
         services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
-                builder => builder.WithOrigins("http://localhost:8080")
+                builder => builder.WithOrigins("http://localhost:8080", "http://localhost:8081")
                                   .AllowAnyHeader()
                                   .AllowAnyMethod());
         });
