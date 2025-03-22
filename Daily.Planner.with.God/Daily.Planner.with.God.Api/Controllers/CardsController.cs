@@ -26,9 +26,9 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseMessage<List<CardInfoDto>>>> GetCards()
+        public async Task<ActionResult<ResponseMessage<List<CardInfoDto>>>> GetCards([FromQuery] Guid userId)
         {
-            var cards = await _cardService.GetCardsAsync();            
+            var cards = await _cardService.GetCardsAsync(userId);            
             List<CardInfoDto> cardsDto = new List<CardInfoDto>();
 
             foreach (var card in cards.Data)
@@ -57,7 +57,8 @@ namespace Daily.Planner.with.God.Api.Controllers
                     LetterDateColor = letterDateColor.Data.Color,
                     UserId = card.UserId,
                     AgendaId = card.AgendaId,
-                    OriginalUserFullName = string.Concat(user.Data.FirstName, " ", user.Data.LastName)
+                    OriginalUserFullName = string.Concat(user.Data.FirstName, " ", user.Data.LastName),
+                    Reported = card.Reported
                 };
 
                 cardsDto.Add(cardDto);

@@ -26,4 +26,5 @@ public class Card
     public Agenda Agenda { get; set; }
     public Guid OriginalUserId { get; set; }
     public User OriginalUser { get; set; }
+    public bool Reported { get; set; }
 }

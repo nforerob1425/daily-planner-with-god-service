@@ -18,5 +18,7 @@
         public Guid UserId { get; set; }
         public Guid AgendaId { get; set; }
         public string OriginalUserFullName { get; set; }
+        public bool Reported { get; set; }
+
     }
 }

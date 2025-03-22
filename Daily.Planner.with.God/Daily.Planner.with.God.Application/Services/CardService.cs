@@ -27,6 +27,19 @@ namespace Daily.Planner.with.God.Application.Services
             
         }
 
+        public async Task<ResponseMessage<List<Card>>> GetCardsAsync(Guid userId)
+        {
+            try
+            {
+                return await _cardRepository.GetAllCardsByUserId(userId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
         public async Task<ResponseMessage<Card?>> GetCardAsync(Guid id)
         {
             try

@@ -11,6 +11,7 @@ namespace Daily.Planner.with.God.Application.Interfaces
     public interface ICardService
     {
         Task<ResponseMessage<List<Card>>> GetCardsAsync();
+        Task<ResponseMessage<List<Card>>> GetCardsAsync(Guid userId);
         Task<ResponseMessage<Card?>> GetCardAsync(Guid id);
         Task<ResponseMessage<Card>> CreateCardAsync(Card card);
         Task<ResponseMessage<bool>> UpdateCardAsync(Card card);
