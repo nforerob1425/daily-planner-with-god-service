@@ -22,9 +22,9 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseMessage<List<Agenda>>>> GetAgendas()
+        public async Task<ActionResult<ResponseMessage<List<Agenda>>>> GetAgendasByGender(bool isMale)
         {
-            var response = await _agendaService.GetAgendasAsync();
+            var response = await _agendaService.GetAgendasAsync(isMale);
             if (response.Success)
             {
                 return Ok(response);

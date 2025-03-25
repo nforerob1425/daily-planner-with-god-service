@@ -17,11 +17,11 @@ namespace Daily.Planner.with.God.Application.Services
             _agendaRepository = agendaRepository;
         }
 
-        public async Task<ResponseMessage<List<Agenda>>> GetAgendasAsync()
+        public async Task<ResponseMessage<List<Agenda>>> GetAgendasAsync(bool isMale)
         {
             try
             {
-                return await _agendaRepository.GetAllAsync();
+                return await _agendaRepository.GetAgendasAsync(isMale);
             }
             catch (Exception)
             {

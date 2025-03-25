@@ -23,5 +23,6 @@ namespace Daily.Planner.with.God.Domain.Entities
         public Guid? LeadId { get; set; }
         public User? Lead { get; set; }
         public ICollection<Card> Cards { get; set; }
+        public bool IsMale { get; set; } = true;
     }
 }

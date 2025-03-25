@@ -52,7 +52,8 @@ namespace Daily.Planner.with.God.Api.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     ConfigurationId = user.ConfigurationId,
-                    Token = token
+                    Token = token,
+                    IsMale = user.IsMale
                 };
 
                 return Ok(userInfo);

@@ -8,6 +8,6 @@ namespace Daily.Planner.with.God.Persistance.Interfaces
 {
     public interface IAgendaRepository : IRepository<Agenda>
     {
-        
+        Task<ResponseMessage<List<Agenda>>> GetAgendasAsync(bool isMale);
     }
 }

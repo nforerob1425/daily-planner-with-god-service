@@ -33,34 +33,7 @@ namespace Daily.Planner.with.God.Api.Controllers
 
             foreach (var card in cards.Data)
             {
-                var primaryColor = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorId);
-                var letterColor = await _colorPalettService.GetColorPalettAsync(card.LetterColorId);
-                var titleColor = await _colorPalettService.GetColorPalettAsync(card.TitleColorId);
-                var letterDateColor = await _colorPalettService.GetColorPalettAsync(card.LetterDateColorId);
-                var primaryColorDate = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorDateId);
-                var user = await _userService.GetUserAsync(card.OriginalUserId);
-
-                var cardDto = new CardInfoDto()
-                {
-                    Id = card.Id,
-                    CreateDate = card.CreateDate,
-                    MonthCreated = card.CreateDate.ToString("MMMM"),
-                    DayCreated = card.CreateDate.ToString("dd"),
-                    Title = card.Title,
-                    Content = card.Content,
-                    Favorite = card.Favorite,
-                    PrimaryColor = primaryColor.Data.Color,
-                    LetterColor = letterColor.Data.Color,
-                    TitleColor = titleColor.Data.Color,
-                    Versicle = card.Versicle,
-                    PrimaryColorDate = primaryColorDate.Data.Color,
-                    LetterDateColor = letterDateColor.Data.Color,
-                    UserId = card.UserId,
-                    AgendaId = card.AgendaId,
-                    OriginalUserFullName = string.Concat(user.Data.FirstName, " ", user.Data.LastName),
-                    Reported = card.Reported
-                };
-
+                var cardDto = await GetCustomCardInfoAsync(card);
                 cardsDto.Add(cardDto);
             }   
 
@@ -86,7 +59,7 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResponseMessage<Card>>> CreateCard(CardCreateDto cardtoCreate)
+        public async Task<ActionResult<ResponseMessage<CardInfoDto>>> CreateCard(CardCreateDto cardtoCreate)
         {
             var card = new Card
             {
@@ -105,7 +78,21 @@ namespace Daily.Planner.with.God.Api.Controllers
                 OriginalUserId = cardtoCreate.UserId
             };
 
-            return await _cardService.CreateCardAsync(card);
+            var createdCard = await _cardService.CreateCardAsync(card);
+
+            var cardDto = new CardInfoDto();
+
+            if (createdCard.Success && createdCard.Data != null)
+            {
+                cardDto = await GetCustomCardInfoAsync(card);
+            }
+
+            return new ActionResult<ResponseMessage<CardInfoDto>>(new ResponseMessage<CardInfoDto>
+            {
+                Data = cardDto,
+                Message = createdCard.Message,
+                Success = createdCard.Success
+            });
         }
 
         [HttpPut("{id}")]
@@ -132,6 +119,39 @@ namespace Daily.Planner.with.God.Api.Controllers
         public async Task<ResponseMessage<bool>> DeleteCard(Guid id)
         {
             return await _cardService.DeleteCardAsync(id);
+        }
+
+        private async Task<CardInfoDto> GetCustomCardInfoAsync(Card card)
+        {
+            var primaryColor = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorId);
+            var letterColor = await _colorPalettService.GetColorPalettAsync(card.LetterColorId);
+            var titleColor = await _colorPalettService.GetColorPalettAsync(card.TitleColorId);
+            var letterDateColor = await _colorPalettService.GetColorPalettAsync(card.LetterDateColorId);
+            var primaryColorDate = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorDateId);
+            var user = await _userService.GetUserAsync(card.OriginalUserId);
+
+            var cardDto = new CardInfoDto()
+            {
+                Id = card.Id,
+                CreateDate = card.CreateDate,
+                MonthCreated = card.CreateDate.ToString("MMMM"),
+                DayCreated = card.CreateDate.ToString("dd"),
+                Title = card.Title,
+                Content = card.Content,
+                Favorite = card.Favorite,
+                PrimaryColor = primaryColor.Data.Color,
+                LetterColor = letterColor.Data.Color,
+                TitleColor = titleColor.Data.Color,
+                Versicle = card.Versicle,
+                PrimaryColorDate = primaryColorDate.Data.Color,
+                LetterDateColor = letterDateColor.Data.Color,
+                UserId = card.UserId,
+                AgendaId = card.AgendaId,
+                OriginalUserFullName = string.Concat(user.Data.FirstName, " ", user.Data.LastName),
+                Reported = card.Reported
+            };
+
+            return cardDto;
         }
     }
 }

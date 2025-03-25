@@ -14,5 +14,6 @@ namespace Daily.Planner.with.God.Domain.Entities
         public string ImageBackgroundSrc { get; set; }
         public bool IsReported { get; set; }
         public ICollection<Card> Cards { get; set; }
+        public bool IsMale { get; set; } = true;
     }
 }

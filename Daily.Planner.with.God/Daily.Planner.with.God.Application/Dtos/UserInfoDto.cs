@@ -15,5 +15,6 @@ namespace Daily.Planner.with.God.Application.Dtos
         public string LastName { get; set; }
         public Guid ConfigurationId { get; set; }
         public string Token { get; set; }
+        public bool IsMale { get; set; }
     }
 }
