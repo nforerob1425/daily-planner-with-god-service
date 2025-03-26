@@ -95,24 +95,28 @@ namespace Daily.Planner.with.God.Api.Controllers
             });
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ResponseMessage<bool>> UpdateCard(CardUpdateDto cardToUpdate)
         {
             var cardResponse = await _cardService.GetCardAsync(cardToUpdate.Id);
             if (cardResponse.Success)
             {
                 var card = cardResponse.Data;
+                var userData = await _userService.GetUserAsync(card.UserId);
                 _mapper.Map(cardToUpdate, card);
-                return await _cardService.UpdateCardAsync(card);
-            }
-            else
-            {
-                return new ResponseMessage<bool>
+                card.OriginalUser = userData.Success ? userData.Data : null;
+                card.OriginalUserId = userData.Success ? userData.Data.Id : Guid.Empty;
+                var cardUpdated = await _cardService.UpdateCardAsync(card);
+                if (cardUpdated.Success)
                 {
-                    Success = false,
-                    Message = "Card not found"
-                };
+                    return cardUpdated;
+                }
             }
+            return new ResponseMessage<bool>
+            {
+                Success = false,
+                Message = "Card not found"
+            };
         }
 
         [HttpDelete("{id}")]
