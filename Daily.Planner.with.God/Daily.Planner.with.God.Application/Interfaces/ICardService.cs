@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Daily.Planner.with.God.Application.Dtos;
 using Daily.Planner.with.God.Common;
 using Daily.Planner.with.God.Domain.Entities;
 
@@ -17,5 +18,6 @@ namespace Daily.Planner.with.God.Application.Interfaces
         Task<ResponseMessage<bool>> UpdateCardAsync(Card card);
         Task<ResponseMessage<bool>> DeleteCardAsync(Guid id);
         Task<ResponseMessage<bool>> SetFavoriteCard(Card card);
+        Task<CardInfoDto> GetCustomCardInfoAsync(Card card);
     }
 }

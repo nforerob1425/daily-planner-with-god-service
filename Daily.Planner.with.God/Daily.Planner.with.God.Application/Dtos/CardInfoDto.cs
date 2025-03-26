@@ -3,7 +3,7 @@
     public class CardInfoDto
     {
         public Guid Id { get; set; }
-        public DateTime CreateDate { get; set; }
+        public string CreateDate { get; set; }
         public string MonthCreated { get; set; }
         public string DayCreated { get; set; }
         public string Title { get; set; }
