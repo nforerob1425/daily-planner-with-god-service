@@ -58,6 +58,32 @@ namespace Daily.Planner.with.God.Api.Controllers
             return card;
         }
 
+        [HttpPatch]
+        public async Task<ActionResult<ResponseMessage<bool>>> SetFavoriteCard([FromQuery] Guid cardId)
+        {
+            var response = new ResponseMessage<bool>()
+            {
+                Data = false,
+                Message = "Card not found",
+                Success = false
+            };
+
+            var cardData = await _cardService.GetCardAsync(cardId);
+            if (cardData.Success)
+            {
+                response.Message = cardData.Message;
+                cardData.Data.Favorite = !cardData.Data.Favorite;
+                var cardUpdatedData = await _cardService.SetFavoriteCard(cardData.Data);
+                if (cardUpdatedData.Success)
+                {
+                    response.Success = cardUpdatedData.Success;
+                    response.Data = cardUpdatedData.Data;
+                    response.Message = cardUpdatedData.Message;
+                }
+            }
+            return response;
+        }
+
         [HttpPost]
         public async Task<ActionResult<ResponseMessage<CardInfoDto>>> CreateCard(CardCreateDto cardtoCreate)
         {

@@ -88,5 +88,18 @@ namespace Daily.Planner.with.God.Application.Services
                 throw ex;
             }
         }
+
+        public async Task<ResponseMessage<bool>> SetFavoriteCard(Card card)
+        {
+            try
+            {
+                return await _cardRepository.UpdateAsync(card);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }

@@ -16,5 +16,6 @@ namespace Daily.Planner.with.God.Application.Interfaces
         Task<ResponseMessage<Card>> CreateCardAsync(Card card);
         Task<ResponseMessage<bool>> UpdateCardAsync(Card card);
         Task<ResponseMessage<bool>> DeleteCardAsync(Guid id);
+        Task<ResponseMessage<bool>> SetFavoriteCard(Card card);
     }
 }

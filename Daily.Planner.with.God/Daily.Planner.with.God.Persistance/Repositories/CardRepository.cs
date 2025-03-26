@@ -1,5 +1,4 @@
 ﻿using Daily.Planner.with.God.Common;
-using Daily.Planner.with.God.Domain.Entities;
 using Daily.Planner.with.God.Persistance.Interfaces;
 
 namespace Daily.Planner.with.God.Persistance.Repositories
