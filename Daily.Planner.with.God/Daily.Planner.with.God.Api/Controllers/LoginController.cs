@@ -60,6 +60,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     IsMale = user.IsMale,
                     HasLead = !string.IsNullOrEmpty(user.LeadId?.ToString()),
                     ConfigurationName = string.Empty,
+                    ConfigurationId = user.ConfigurationId,
                 };
 
                 var configData = await _configurationService.GetConfigurationAsync(user.ConfigurationId);

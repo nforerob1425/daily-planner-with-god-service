@@ -54,7 +54,7 @@ namespace Daily.Planner.with.God.Api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult<ResponseMessage<bool>>> UpdateConfiguration(Configuration configuration)
         {
             var response = await _configurationService.UpdateConfigurationAsync(configuration);

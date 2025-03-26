@@ -13,10 +13,12 @@ namespace Daily.Planner.with.God.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IConfigurationService _configurationService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IConfigurationService configurationService)
         {
             _userService = userService;
+            _configurationService = configurationService;
         }
 
         [HttpGet]
@@ -39,6 +41,31 @@ namespace Daily.Planner.with.God.Api.Controllers
                 return Ok(response);
             }
             return NotFound(response);
+        }
+
+        [HttpPatch]
+        public async Task<ResponseMessage<bool>> UpdateConfiguration(UserConfigurationUpdateDto newUserConfigration)
+        {
+            var response = new ResponseMessage<bool>()
+            {
+                Success = false,
+                Message = "Not found"
+            };
+
+            var userData = await _userService.GetUserAsync(newUserConfigration.UserId);
+            var configurationData = await _configurationService.GetConfigurationAsync(newUserConfigration.ConfigurationId);
+
+            if (userData.Success && configurationData.Success)
+            {
+                userData.Data.Configuration = configurationData.Data;
+                userData.Data.ConfigurationId = configurationData.Data.Id;
+
+                var userUpdated = await _userService.UpdateUserAsync(userData.Data);
+                response.Success = userUpdated.Success;
+                response.Message = userUpdated.Message;
+                response.Data = userUpdated.Data;
+            }
+            return response;
         }
 
         [HttpPost]
