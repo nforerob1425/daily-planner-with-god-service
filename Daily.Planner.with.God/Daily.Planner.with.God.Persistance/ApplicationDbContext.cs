@@ -120,7 +120,7 @@ public class ApplicationDbContext : DbContext
                 Year = 2025,
                 Title = "R07-2025",
                 Content = "Contenido para la agenda",
-                ImageBackgroundSrc = "https://imgs.search.brave.com/sX79eLHhVT15r0HiO6z-lp5roWgDnOR0ktAmkvij5Gk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvaW1hZ2VuZXMt/Y3Jpc3RpYW5hcy10/dWV3dnVyN2t6OWY3/Y3lxLmpwZw",
+                ImageBackgroundSrc = "/assets/backgrounds/R07-2025.png",
                 IsReported = false
             },
             new Agenda
@@ -129,7 +129,7 @@ public class ApplicationDbContext : DbContext
                 Year = 2025,
                 Title = "R07-2025",
                 Content = "Contenido para la agenda",
-                ImageBackgroundSrc = "https://imgs.search.brave.com/sX79eLHhVT15r0HiO6z-lp5roWgDnOR0ktAmkvij5Gk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvaW1hZ2VuZXMt/Y3Jpc3RpYW5hcy10/dWV3dnVyN2t6OWY3/Y3lxLmpwZw",
+                ImageBackgroundSrc = "/assets/backgrounds/R07-2025.png",
                 IsReported = true
             }
         );
