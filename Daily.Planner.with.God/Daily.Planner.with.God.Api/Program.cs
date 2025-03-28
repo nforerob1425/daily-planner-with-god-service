@@ -89,8 +89,8 @@ internal class Program
 
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowSpecificOrigin",
-                builder => builder.WithOrigins("http://localhost:8080", "http://localhost:8081")
+            options.AddPolicy("AllowAll",
+                builder => builder.AllowAnyOrigin()
                                   .AllowAnyHeader()
                                   .AllowAnyMethod());
         });
@@ -124,7 +124,7 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
-        app.UseCors("AllowSpecificOrigin");
+        app.UseCors("AllowAll");
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

@@ -14,11 +14,15 @@ namespace Daily.Planner.with.God.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IConfigurationService _configurationService;
+        private readonly IRolService _rolService;
+        private readonly ICardService _cardService;
 
-        public UsersController(IUserService userService, IConfigurationService configurationService)
+        public UsersController(IUserService userService, IConfigurationService configurationService, IRolService rolService, ICardService cardService)
         {
             _userService = userService;
             _configurationService = configurationService;
+            _rolService = rolService;
+            _cardService = cardService;
         }
 
         [HttpGet]
@@ -71,22 +75,53 @@ namespace Daily.Planner.with.God.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ResponseMessage<User>>> CreateUser(UserCreateDto user)
         {
+            var userData = await _userService.GetUserByUsernameAsync(user.Username);
+            if (userData != null)
+            {
+                return BadRequest("Este nombre de usuario ya está en uso");
+            }
+
+
             var userCreated = new User
             {
+                Id = Guid.NewGuid(),
                 Username = user.Username,
-                RoleId = user.RoleId,
-                Password = EncryptionHelper.EncryptString(user.Password),
+                Password = EncryptionHelper.EncryptString("123456"),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                ConfigurationId = user.ConfigurationId,
-                LeadId = user.LeadId
+                IsMale = user.IsMale,
             };
+
+            var roleData = await _rolService.GetRoleAsync(user.RoleId);
+            if(roleData.Success)
+            {
+                userCreated.Role = roleData.Data;
+                userCreated.RoleId = roleData.Data.Id;
+            }
+
+            var configurationData = await _configurationService.GetConfigurationsAsync();
+            if(configurationData.Success)
+            {
+                var configuration = configurationData.Data.Where(c => c.Name == "Default").FirstOrDefault();
+                userCreated.Configuration = configuration;
+                userCreated.ConfigurationId = configuration.Id;
+            }
+
+            if (user.LeadId != null)
+            {
+                var leadData = await _userService.GetUserAsync((Guid)user.LeadId);
+                if (leadData.Success)
+                {
+                    userCreated.LeadId = leadData.Data.Id;
+                    userCreated.Lead = leadData.Data;
+                }
+            }
 
             var response = await _userService.CreateUserAsync(userCreated);
             if (response.Success)
             {
-                return CreatedAtAction(nameof(GetUser), new { id = response.Data.Id }, response);
+                return Ok(response);
             }
             return BadRequest(response);
         }
@@ -94,19 +129,35 @@ namespace Daily.Planner.with.God.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseMessage<bool>>> UpdateUser(UserCreateDto user)
         {
-            var userUpdated = new User
-            {
-                Username = user.Username,
-                RoleId = user.RoleId,
-                Password = user.Password,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                ConfigurationId = user.ConfigurationId,
-                LeadId = user.LeadId
-            };
+            var currentUserData = await _userService.GetUserAsync((Guid)user.Id);
 
-            var response = await _userService.UpdateUserAsync(userUpdated);
+            if (currentUserData.Success) 
+            { 
+                var roleData = await _rolService.GetRoleAsync(user.RoleId);
+                if (roleData.Success && roleData.Data.Id != currentUserData.Data.RoleId)
+                {
+                    currentUserData.Data.RoleId = roleData.Data.Id;
+                    currentUserData.Data.Role = roleData.Data;
+                }
+
+                if (user.LeadId != null)
+                {
+                    var leadData = await _userService.GetUserAsync((Guid)user.LeadId);
+                    if (leadData.Success && leadData.Data.Id != currentUserData.Data.LeadId)
+                    {
+                        currentUserData.Data.LeadId = leadData.Data.Id;
+                        currentUserData.Data.Lead = leadData.Data;
+                    }
+                }
+
+                currentUserData.Data.Username = user.Username;
+                currentUserData.Data.FirstName = user.FirstName;
+                currentUserData.Data.LastName = user.LastName;
+                currentUserData.Data.Email = user.Email;
+                currentUserData.Data.IsMale = user.IsMale;
+            }
+
+            var response = await _userService.UpdateUserAsync(currentUserData.Data);
             if (response.Success)
             {
                 return Ok(response);
@@ -114,13 +165,30 @@ namespace Daily.Planner.with.God.Api.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> DeleteUser(Guid id)
+        [HttpDelete("{userId}")]
+        public async Task<ActionResult<ResponseMessage<bool>>> DeleteUser(Guid userId)
         {
-            var response = await _userService.DeleteUserAsync(id);
-            if (response.Success)
+            var cards = await _cardService.GetCardsAsync(userId);
+            var response = new ResponseMessage<bool>()
             {
-                return Ok(response);
+                Success = cards.Success,
+                Message = cards.Message,
+                Data = cards.Success
+            };
+
+            if (cards.Success)
+            {
+                foreach (var card in cards.Data)
+                {
+                    await _cardService.DeleteCardAsync(card.Id);
+                }
+                
+                response = await _userService.DeleteUserAsync(userId);
+
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
             }
             return BadRequest(response);
         }
