@@ -140,5 +140,11 @@ namespace Daily.Planner.with.God.Application.Services
 
             return cardDto;
         }
+
+        public Task<ResponseMessage<List<Card>>> GetNonReportedCards(Guid userId)
+        {
+            var nonReportedCards = _cardRepository.GetAllCardsNoReportedByUserId(userId);
+            return nonReportedCards;
+        }
     }
 }
