@@ -38,6 +38,18 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
+        public async Task<ResponseMessage<List<Petition>>> GetPetitionsByLeadIdAsync(Guid userId)
+        {
+            try
+            {
+                return await _petitionRepository.GetAllPetitionsByLeadId(userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<ResponseMessage<Petition?>> GetPetitionAsync(Guid id)
         {
             try

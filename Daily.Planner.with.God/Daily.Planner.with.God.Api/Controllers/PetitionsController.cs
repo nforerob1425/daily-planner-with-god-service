@@ -86,5 +86,31 @@ namespace Daily.Planner.with.God.Api.Controllers
             var result = await _petitionService.DeletePetitionAsync(id);
             return Ok(result);
         }
+
+        [HttpPatch]
+        public async Task<ActionResult<ResponseMessage<bool>>> SetPrayPetition([FromQuery] Guid petitionId)
+        {
+            var response = new ResponseMessage<bool>()
+            {
+                Data = false,
+                Message = "Card not found",
+                Success = false
+            };
+
+            var petitionData = await _petitionService.GetPetitionAsync(petitionId);
+            if (petitionData.Success)
+            {
+                response.Message = petitionData.Message;
+                petitionData.Data.IsPraying = !petitionData.Data.IsPraying;
+                var petitionUpdatedData = await _petitionService.UpdatePetitionAsync(petitionData.Data);
+                if (petitionUpdatedData.Success)
+                {
+                    response.Success = petitionUpdatedData.Success;
+                    response.Data = petitionUpdatedData.Data;
+                    response.Message = petitionUpdatedData.Message;
+                }
+            }
+            return response;
+        }
     }
 }

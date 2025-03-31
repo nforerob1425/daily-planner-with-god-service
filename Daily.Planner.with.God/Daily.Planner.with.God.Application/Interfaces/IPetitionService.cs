@@ -12,6 +12,7 @@ namespace Daily.Planner.with.God.Application.Interfaces
     {
         Task<ResponseMessage<List<Petition>>> GetPetitionsAsync();
         Task<ResponseMessage<List<Petition>>> GetPetitionsAsync(Guid userId);
+        Task<ResponseMessage<List<Petition>>> GetPetitionsByLeadIdAsync(Guid leadId);
         Task<ResponseMessage<Petition?>> GetPetitionAsync(Guid id);
         Task<ResponseMessage<Petition>> CreatePetitionAsync(Petition type);
         Task<ResponseMessage<bool>> UpdatePetitionAsync(Petition type);

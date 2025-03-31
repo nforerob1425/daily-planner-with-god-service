@@ -26,5 +26,7 @@ namespace Daily.Planner.with.God.Application.Dtos
         public List<CardInfoDto?> FavoriteCards { get; set; }
         public int TotalCardsCreated { get; set; }
         public int TotalCardsReported { get; set; }
+        public List<PetitionInfoDto> PetitionsReported { get; set; }
+        public List<PetitionType> PetitionTypes { get; set; }
     }
 }

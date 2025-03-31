@@ -20,13 +20,17 @@ namespace Daily.Planner.with.God.Api.Controllers
         private readonly IConfiguration _configuration;
         private readonly IConfigurationService _configurationService;
         private readonly ICardService _cardService;
+        private readonly IPetitionService _petitionService;
+        private readonly IPetitionTypesService _petitionTypesService;
 
-        public LoginController(IUserService userService , IConfiguration configuration, IConfigurationService configurationService, ICardService cardService)
+        public LoginController(IUserService userService , IConfiguration configuration, IConfigurationService configurationService, ICardService cardService, IPetitionService petitionService, IPetitionTypesService petitionTypesService)
         {
             _userService = userService;
             _configuration = configuration;
             _configurationService = configurationService;
             _cardService = cardService;
+            _petitionService = petitionService;
+            _petitionTypesService = petitionTypesService;
         }
 
         [HttpPost("login")]
@@ -85,6 +89,32 @@ namespace Daily.Planner.with.God.Api.Controllers
                         }
                         userInfo.FavoriteCards = cardsDto;
                     }
+                }
+
+                var petitionsData = await _petitionService.GetPetitionsByLeadIdAsync(user.Id);
+                if (petitionsData.Success && petitionsData.Data.Count > 0)
+                {
+                    var petitionTypes = await _petitionTypesService.GetPetitionTypesAsync();
+                    userInfo.PetitionsReported = new List<PetitionInfoDto>();
+                    foreach (var petition in petitionsData.Data)
+                    {
+                        PetitionInfoDto petitionInfoDto = new PetitionInfoDto()
+                        {
+                            Id = petition.Id,
+                            PrayFor = petition.PrayFor,
+                            Content = petition.Content,
+                            CreatedDate = DateTime.Now,
+                            IsPraying = petition.IsPraying,
+                            PetitionTypeId = petition.PetitionTypeId,
+                            UserId = petition.UserId,
+                        };
+
+                        var userPetition = await _userService.GetUserAsync(petition.UserId);
+                        petitionInfoDto.OriginalUser = userPetition.Data.FirstName + " " + userPetition.Data.LastName;
+                        userInfo.PetitionsReported.Add(petitionInfoDto);
+                    }
+                    
+                    userInfo.PetitionTypes = petitionTypes.Data;
                 }
 
                 if (user.LeadId != null) 
