@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Daily.Planner.with.God.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250331175634_AddPetitions")]
+    partial class AddPetitions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,78 +284,6 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Petition", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsPraying")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("PetitionTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("PrayFor")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ReportedToUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PetitionTypeId");
-
-                    b.HasIndex("ReportedToUserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Petitions");
-                });
-
-            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.PetitionType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PetitionTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("f345ba02-73c0-42f4-8093-047a1cd0fe5f"),
-                            Color = "#FFFFFF",
-                            Icon = "mdi-comment-question-outline",
-                            Name = "Otro"
-                        });
-                });
-
             modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -608,33 +539,6 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Rol");
-                });
-
-            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Petition", b =>
-                {
-                    b.HasOne("Daily.Planner.with.God.Domain.Entities.PetitionType", "PetitionType")
-                        .WithMany()
-                        .HasForeignKey("PetitionTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Daily.Planner.with.God.Domain.Entities.User", "ReportedToUser")
-                        .WithMany()
-                        .HasForeignKey("ReportedToUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Daily.Planner.with.God.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PetitionType");
-
-                    b.Navigation("ReportedToUser");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.User", b =>

@@ -42,6 +42,8 @@ internal class Program
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IRolRepository, RolRepository>();
         services.AddScoped<ITypeRepository, TypeRepository>();
+        services.AddScoped<IPetitionRepository, PetitionRepository>();
+        services.AddScoped<IPetitionTypeRepository, PetitionTypeRepository>();
 
         services.AddScoped<ICardService, CardService>();
         services.AddScoped<IUserService, UserService>();
@@ -52,6 +54,8 @@ internal class Program
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IRolService, RolService>();
         services.AddScoped<ITypeService, TypeService>();
+        services.AddScoped<IPetitionService, PetitionService>();
+        services.AddScoped<IPetitionTypesService, PetitionTypesService>();
 
         services.AddControllers();
 

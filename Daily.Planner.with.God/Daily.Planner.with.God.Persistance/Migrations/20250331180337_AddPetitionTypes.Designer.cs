@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Daily.Planner.with.God.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250331180337_AddPetitionTypes")]
+    partial class AddPetitionTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,10 +330,6 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Icon")
                         .IsRequired()
                         .HasColumnType("text");
@@ -347,7 +346,6 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         new
                         {
                             Id = new Guid("f345ba02-73c0-42f4-8093-047a1cd0fe5f"),
-                            Color = "#FFFFFF",
                             Icon = "mdi-comment-question-outline",
                             Name = "Otro"
                         });

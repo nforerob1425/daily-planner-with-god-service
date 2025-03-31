@@ -15,6 +15,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Configuration> Configurations { get; set; }
     public DbSet<Agenda> Agendas { get; set; }
+    public DbSet<Petition> Petitions { get; set; }
+    public DbSet<PetitionType> PetitionTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +86,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(u => u.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Petition>()
+            .HasOne(c => c.PetitionType)
+            .WithMany()
+            .HasForeignKey(c => c.PetitionTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Role>().HasData(
@@ -140,6 +148,16 @@ public class ApplicationDbContext : DbContext
                 Id = Guid.Parse("788A03CD-2864-44B2-883A-4D137F737ADA"),
                 ShowFavorites = false,
                 ShowPetitions = false
+            }
+        );
+
+        modelBuilder.Entity<PetitionType>().HasData(
+            new PetitionType
+            {
+                Id = Guid.Parse("F345BA02-73C0-42F4-8093-047A1CD0FE5F"),
+                Name = "Otro",
+                Icon = "mdi-comment-question-outline",
+                Color = "#FFFFFF"
             }
         );
     }
