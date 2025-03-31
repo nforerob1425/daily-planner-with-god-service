@@ -119,6 +119,7 @@ namespace Daily.Planner.with.God.Application.Services
             var cardDto = new CardInfoDto()
             {
                 Id = card.Id,
+                Created = card.CreateDate,
                 CreateDate = card.CreateDate.ToString("yyyy"),
                 MonthCreated = card.CreateDate.ToString("MMMM"),
                 DayCreated = card.CreateDate.ToString("dd"),
