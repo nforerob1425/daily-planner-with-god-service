@@ -44,6 +44,7 @@ namespace Daily.Planner.with.God.Api.Controllers
         public async Task<ResponseMessage<List<Domain.Entities.Type>>> GetAllColorTypes()
         {
             var colorTypes = await _typeService.GetTypesAsync();
+            colorTypes.Data = colorTypes.Data.OrderBy(c => c.Name).ToList();
             return colorTypes;
         }
 
