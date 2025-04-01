@@ -23,7 +23,7 @@ namespace Daily.Planner.with.God.Api.Controllers
         private readonly IPetitionService _petitionService;
         private readonly IPetitionTypesService _petitionTypesService;
 
-        public LoginController(IUserService userService , IConfiguration configuration, IConfigurationService configurationService, ICardService cardService, IPetitionService petitionService, IPetitionTypesService petitionTypesService)
+        public LoginController(IUserService userService, IConfiguration configuration, IConfigurationService configurationService, ICardService cardService, IPetitionService petitionService, IPetitionTypesService petitionTypesService)
         {
             _userService = userService;
             _configuration = configuration;
@@ -33,8 +33,100 @@ namespace Daily.Planner.with.God.Api.Controllers
             _petitionTypesService = petitionTypesService;
         }
 
+        [HttpGet("{userId}")]
+        [Authorize]
+        public async Task<ResponseMessage<UserInfoDto>> GetCurrentUserInfo(Guid userId)
+        {
+            var userData = await _userService.GetUserAsync(userId);
+            var user = userData.Data;
+
+            var userInfo = new UserInfoDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                IsMale = user.IsMale,
+                HasLead = !string.IsNullOrEmpty(user.LeadId?.ToString()),
+                ConfigurationName = string.Empty,
+                ConfigurationId = user.ConfigurationId,
+            };
+
+            var configData = await _configurationService.GetConfigurationAsync(user.ConfigurationId);
+
+            if (configData.Success)
+            {
+                userInfo.ConfigurationName = configData.Data.Name;
+                userInfo.ShowFavorites = configData.Data.ShowFavorites;
+                userInfo.ShowPetitions = configData.Data.ShowPetitions;
+
+                if (configData.Data.ShowFavorites)
+                {
+                    var cards = await _cardService.GetCardsAsync(user.Id);
+                    List<CardInfoDto> cardsDto = new List<CardInfoDto>();
+                    userInfo.TotalCardsCreated = cards.Data.Where(c => c.UserId == c.OriginalUserId).ToList().Count;
+                    userInfo.TotalCardsReported = cards.Data.Where(c => c.UserId != c.OriginalUserId).ToList().Count;
+
+                    foreach (var card in cards.Data.Where(c => c.Favorite && c.UserId == c.OriginalUserId))
+                    {
+                        var cardDto = await _cardService.GetCustomCardInfoAsync(card);
+                        cardsDto.Add(cardDto);
+                    }
+                    userInfo.FavoriteCards = cardsDto;
+                }
+            }
+
+            var petitionsData = await _petitionService.GetPetitionsByLeadIdAsync(user.Id);
+            if (petitionsData.Success && petitionsData.Data.Count > 0)
+            {
+                var petitionTypes = await _petitionTypesService.GetPetitionTypesAsync();
+                userInfo.PetitionsReported = new List<PetitionInfoDto>();
+                foreach (var petition in petitionsData.Data)
+                {
+                    PetitionInfoDto petitionInfoDto = new PetitionInfoDto()
+                    {
+                        Id = petition.Id,
+                        PrayFor = petition.PrayFor,
+                        Content = petition.Content,
+                        CreatedDate = DateTime.Now,
+                        IsPraying = petition.IsPraying,
+                        PetitionTypeId = petition.PetitionTypeId,
+                        UserId = petition.UserId,
+                    };
+
+                    var userPetition = await _userService.GetUserAsync(petition.UserId);
+                    petitionInfoDto.OriginalUser = userPetition.Data.FirstName + " " + userPetition.Data.LastName;
+                    userInfo.PetitionsReported.Add(petitionInfoDto);
+                }
+
+                userInfo.PetitionTypes = petitionTypes.Data;
+            }
+
+            if (user.LeadId != null)
+            {
+                Guid leadId = (Guid)user.LeadId;
+                var leadData = await _userService.GetUserAsync(leadId);
+
+                if (leadData.Success)
+                {
+                    userInfo.LeadFirstname = leadData.Data.FirstName;
+                    userInfo.LeadLastName = leadData.Data.LastName;
+                    userInfo.IsMaleLead = leadData.Data.IsMale;
+                }
+            }
+
+            var response = new ResponseMessage<UserInfoDto>()
+            {
+                Data = userInfo,
+                Message = "Get data successful",
+                Success = true
+            };
+
+            return response;
+        }
+
         [HttpPost("login")]
-        public async Task<ActionResult<ResponseMessage<UserInfoDto>>> Login([FromBody] LoginRequestDto loginRequest)
+        public async Task<ActionResult<ResponseMessage<LoginUserDto>>> Login([FromBody] LoginRequestDto loginRequest)
         {
             try
             {
@@ -54,83 +146,25 @@ namespace Daily.Planner.with.God.Api.Controllers
                 
                 var token = GenerateJwtToken(user);
 
-                var userInfo = new UserInfoDto
+                var userInfo = new LoginUserDto
                 {
                     Id = user.Id,
-                    Username = user.Username,
+                    Token = token,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Token = token,
                     IsMale = user.IsMale,
                     HasLead = !string.IsNullOrEmpty(user.LeadId?.ToString()),
-                    ConfigurationName = string.Empty,
                     ConfigurationId = user.ConfigurationId,
                 };
 
-                var configData = await _configurationService.GetConfigurationAsync(user.ConfigurationId);
-
-                if (configData.Success) 
-                { 
-                    userInfo.ConfigurationName = configData.Data.Name; 
-                    userInfo.ShowFavorites = configData.Data.ShowFavorites;
-                    userInfo.ShowPetitions = configData.Data.ShowPetitions;
-
-                    if (configData.Data.ShowFavorites) 
-                    {
-                        var cards = await _cardService.GetCardsAsync(user.Id);
-                        List<CardInfoDto> cardsDto = new List<CardInfoDto>();
-                        userInfo.TotalCardsCreated = cards.Data.Where(c => c.UserId == c.OriginalUserId).ToList().Count;
-                        userInfo.TotalCardsReported = cards.Data.Where(c => c.UserId != c.OriginalUserId).ToList().Count;
-
-                        foreach (var card in cards.Data.Where(c => c.Favorite && c.UserId == c.OriginalUserId))
-                        {
-                            var cardDto = await _cardService.GetCustomCardInfoAsync(card);
-                            cardsDto.Add(cardDto);
-                        }
-                        userInfo.FavoriteCards = cardsDto;
-                    }
-                }
-
-                var petitionsData = await _petitionService.GetPetitionsByLeadIdAsync(user.Id);
-                if (petitionsData.Success && petitionsData.Data.Count > 0)
+                var response = new ResponseMessage<LoginUserDto>()
                 {
-                    var petitionTypes = await _petitionTypesService.GetPetitionTypesAsync();
-                    userInfo.PetitionsReported = new List<PetitionInfoDto>();
-                    foreach (var petition in petitionsData.Data)
-                    {
-                        PetitionInfoDto petitionInfoDto = new PetitionInfoDto()
-                        {
-                            Id = petition.Id,
-                            PrayFor = petition.PrayFor,
-                            Content = petition.Content,
-                            CreatedDate = DateTime.Now,
-                            IsPraying = petition.IsPraying,
-                            PetitionTypeId = petition.PetitionTypeId,
-                            UserId = petition.UserId,
-                        };
+                    Data = userInfo,
+                    Message = "Get data successful",
+                    Success = true
+                };
 
-                        var userPetition = await _userService.GetUserAsync(petition.UserId);
-                        petitionInfoDto.OriginalUser = userPetition.Data.FirstName + " " + userPetition.Data.LastName;
-                        userInfo.PetitionsReported.Add(petitionInfoDto);
-                    }
-                    
-                    userInfo.PetitionTypes = petitionTypes.Data;
-                }
-
-                if (user.LeadId != null) 
-                {
-                    Guid leadId = (Guid)user.LeadId;
-                    var leadData = await _userService.GetUserAsync(leadId);
-
-                    if (leadData.Success)
-                    {
-                        userInfo.LeadFirstname = leadData.Data.FirstName;
-                        userInfo.LeadLastName = leadData.Data.LastName;
-                        userInfo.IsMaleLead = leadData.Data.IsMale;
-                    }
-                }
-
-                return Ok(userInfo);
+                return response;
             }
             catch (Exception)
             {
