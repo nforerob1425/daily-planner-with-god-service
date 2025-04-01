@@ -124,6 +124,13 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             {
                 response.Success = false;
                 response.Message = $"Error deleting {typeof(T).Name}: {id}, Error: {ex.Message}";
+
+                Exception inner = ex.InnerException;
+                while (inner != null)
+                {
+                    response.Message += $" | InnerError: {inner.Message}";
+                    inner = inner.InnerException;
+                }
             }
 
             return response;
