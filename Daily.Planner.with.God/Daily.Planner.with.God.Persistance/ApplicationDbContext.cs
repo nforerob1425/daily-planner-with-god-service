@@ -92,6 +92,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(c => c.PetitionTypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Ads>()
+            .HasOne(c => c.UserCreated)
+            .WithMany(r => r.Ads)
+            .HasForeignKey(c => c.UserCreatedId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Role>().HasData(
