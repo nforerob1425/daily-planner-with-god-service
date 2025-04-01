@@ -31,7 +31,6 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreateDate")
@@ -55,6 +54,9 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                     b.Property<Guid>("PrimaryColorId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Reported")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
@@ -66,7 +68,6 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Versicle")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -103,6 +104,9 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsGlobal")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -110,7 +114,12 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("UserCreatedId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserCreatedId");
 
                     b.ToTable("Ads");
                 });
@@ -129,8 +138,14 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsMale")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsReported")
                         .HasColumnType("boolean");
+
+                    b.Property<Guid?>("OriginalAgendaId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -141,6 +156,8 @@ namespace Daily.Planner.with.God.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OriginalAgendaId");
+
                     b.ToTable("Agendas");
 
                     b.HasData(
@@ -148,7 +165,8 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         {
                             Id = new Guid("9656ec88-b900-4117-984f-74d2868a2a7c"),
                             Content = "Contenido para la agenda",
-                            ImageBackgroundSrc = "https://imgs.search.brave.com/sX79eLHhVT15r0HiO6z-lp5roWgDnOR0ktAmkvij5Gk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvaW1hZ2VuZXMt/Y3Jpc3RpYW5hcy10/dWV3dnVyN2t6OWY3/Y3lxLmpwZw",
+                            ImageBackgroundSrc = "/assets/backgrounds/R07-2025.png",
+                            IsMale = true,
                             IsReported = false,
                             Title = "R07-2025",
                             Year = 2025
@@ -157,7 +175,8 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         {
                             Id = new Guid("e345b2d8-1c47-405c-b762-7c8dc3d8388a"),
                             Content = "Contenido para la agenda",
-                            ImageBackgroundSrc = "https://imgs.search.brave.com/sX79eLHhVT15r0HiO6z-lp5roWgDnOR0ktAmkvij5Gk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvaW1hZ2VuZXMt/Y3Jpc3RpYW5hcy10/dWV3dnVyN2t6OWY3/Y3lxLmpwZw",
+                            ImageBackgroundSrc = "/assets/backgrounds/R07-2025.png",
+                            IsMale = true,
                             IsReported = true,
                             Title = "R07-2025",
                             Year = 2025
@@ -222,6 +241,10 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("ShowFavorites")
                         .HasColumnType("boolean");
 
@@ -236,6 +259,7 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         new
                         {
                             Id = new Guid("788a03cd-2864-44b2-883a-4d137f737ada"),
+                            Name = "",
                             ShowFavorites = false,
                             ShowPetitions = false
                         });
@@ -263,6 +287,78 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Petition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPraying")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PetitionTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PrayFor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ReportedToUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PetitionTypeId");
+
+                    b.HasIndex("ReportedToUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Petitions");
+                });
+
+            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.PetitionType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PetitionTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f345ba02-73c0-42f4-8093-047a1cd0fe5f"),
+                            Color = "#FFFFFF",
+                            Icon = "mdi-comment-question-outline",
+                            Name = "Otro"
+                        });
                 });
 
             modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Role", b =>
@@ -392,6 +488,9 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsMale")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -488,6 +587,25 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Ads", b =>
+                {
+                    b.HasOne("Daily.Planner.with.God.Domain.Entities.User", "UserCreated")
+                        .WithMany("Ads")
+                        .HasForeignKey("UserCreatedId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("UserCreated");
+                });
+
+            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Agenda", b =>
+                {
+                    b.HasOne("Daily.Planner.with.God.Domain.Entities.Agenda", "OriginalAgenda")
+                        .WithMany()
+                        .HasForeignKey("OriginalAgendaId");
+
+                    b.Navigation("OriginalAgenda");
+                });
+
             modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.ColorPalett", b =>
                 {
                     b.HasOne("Daily.Planner.with.God.Domain.Entities.Type", "Type")
@@ -508,6 +626,33 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.Petition", b =>
+                {
+                    b.HasOne("Daily.Planner.with.God.Domain.Entities.PetitionType", "PetitionType")
+                        .WithMany()
+                        .HasForeignKey("PetitionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Daily.Planner.with.God.Domain.Entities.User", "ReportedToUser")
+                        .WithMany()
+                        .HasForeignKey("ReportedToUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Daily.Planner.with.God.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PetitionType");
+
+                    b.Navigation("ReportedToUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.User", b =>
@@ -560,6 +705,8 @@ namespace Daily.Planner.with.God.Persistance.Migrations
 
             modelBuilder.Entity("Daily.Planner.with.God.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Ads");
+
                     b.Navigation("Cards");
                 });
 #pragma warning restore 612, 618

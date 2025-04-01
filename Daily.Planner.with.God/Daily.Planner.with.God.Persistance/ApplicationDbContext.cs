@@ -15,6 +15,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Configuration> Configurations { get; set; }
     public DbSet<Agenda> Agendas { get; set; }
+    public DbSet<Petition> Petitions { get; set; }
+    public DbSet<PetitionType> PetitionTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +86,18 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(u => u.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Petition>()
+            .HasOne(c => c.PetitionType)
+            .WithMany()
+            .HasForeignKey(c => c.PetitionTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Ads>()
+            .HasOne(c => c.UserCreated)
+            .WithMany(r => r.Ads)
+            .HasForeignKey(c => c.UserCreatedId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Role>().HasData(
@@ -120,7 +134,7 @@ public class ApplicationDbContext : DbContext
                 Year = 2025,
                 Title = "R07-2025",
                 Content = "Contenido para la agenda",
-                ImageBackgroundSrc = "https://imgs.search.brave.com/sX79eLHhVT15r0HiO6z-lp5roWgDnOR0ktAmkvij5Gk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvaW1hZ2VuZXMt/Y3Jpc3RpYW5hcy10/dWV3dnVyN2t6OWY3/Y3lxLmpwZw",
+                ImageBackgroundSrc = "/assets/backgrounds/R07-2025.png",
                 IsReported = false
             },
             new Agenda
@@ -129,7 +143,7 @@ public class ApplicationDbContext : DbContext
                 Year = 2025,
                 Title = "R07-2025",
                 Content = "Contenido para la agenda",
-                ImageBackgroundSrc = "https://imgs.search.brave.com/sX79eLHhVT15r0HiO6z-lp5roWgDnOR0ktAmkvij5Gk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvaW1hZ2VuZXMt/Y3Jpc3RpYW5hcy10/dWV3dnVyN2t6OWY3/Y3lxLmpwZw",
+                ImageBackgroundSrc = "/assets/backgrounds/R07-2025.png",
                 IsReported = true
             }
         );
@@ -140,6 +154,16 @@ public class ApplicationDbContext : DbContext
                 Id = Guid.Parse("788A03CD-2864-44B2-883A-4D137F737ADA"),
                 ShowFavorites = false,
                 ShowPetitions = false
+            }
+        );
+
+        modelBuilder.Entity<PetitionType>().HasData(
+            new PetitionType
+            {
+                Id = Guid.Parse("F345BA02-73C0-42F4-8093-047A1CD0FE5F"),
+                Name = "Otro",
+                Icon = "mdi-comment-question-outline",
+                Color = "#FFFFFF"
             }
         );
     }

@@ -13,5 +13,6 @@ namespace Daily.Planner.with.God.Domain.Entities
         public Guid Id { get; set; }
         public bool ShowFavorites { get; set; }
         public bool ShowPetitions { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

@@ -2,28 +2,49 @@
 using Daily.Planner.with.God.Application.Dtos;
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Common;
-using Daily.Planner.with.God.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CardsController : ControllerBase
     {
         private readonly ICardService _cardService;
+        private readonly IColorPalettService _colorPalettService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public CardsController(ICardService cardService, IMapper mapper)
+        public CardsController(ICardService cardService, IMapper mapper, IColorPalettService colorPalettService, IUserService userService)
         {
             _cardService = cardService;
             _mapper = mapper;
+            _colorPalettService = colorPalettService;
+            _userService = userService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseMessage<List<Card>>>> GetCards()
+        public async Task<ActionResult<ResponseMessage<List<CardInfoDto>>>> GetCards([FromQuery] Guid userId)
         {
-            return await _cardService.GetCardsAsync();
+            var cards = await _cardService.GetCardsAsync(userId);            
+            List<CardInfoDto> cardsDto = new List<CardInfoDto>();
+
+            foreach (var card in cards.Data)
+            {
+                var cardDto = await _cardService.GetCustomCardInfoAsync(card);
+                cardsDto.Add(cardDto);
+            }   
+
+            var response = new ResponseMessage<List<CardInfoDto>>
+            {
+                Data = cardsDto,
+                Message = cards.Message,
+                Success = cards.Success
+            };
+
+            return response;
         }
 
         [HttpGet("{id}")]
@@ -37,8 +58,34 @@ namespace Daily.Planner.with.God.Api.Controllers
             return card;
         }
 
+        [HttpPatch]
+        public async Task<ActionResult<ResponseMessage<bool>>> SetFavoriteCard([FromQuery] Guid cardId)
+        {
+            var response = new ResponseMessage<bool>()
+            {
+                Data = false,
+                Message = "Card not found",
+                Success = false
+            };
+
+            var cardData = await _cardService.GetCardAsync(cardId);
+            if (cardData.Success)
+            {
+                response.Message = cardData.Message;
+                cardData.Data.Favorite = !cardData.Data.Favorite;
+                var cardUpdatedData = await _cardService.SetFavoriteCard(cardData.Data);
+                if (cardUpdatedData.Success)
+                {
+                    response.Success = cardUpdatedData.Success;
+                    response.Data = cardUpdatedData.Data;
+                    response.Message = cardUpdatedData.Message;
+                }
+            }
+            return response;
+        }
+
         [HttpPost]
-        public async Task<ActionResult<ResponseMessage<Card>>> CreateCard(CardCreateDto cardtoCreate)
+        public async Task<ActionResult<ResponseMessage<CardInfoDto>>> CreateCard(CardCreateDto cardtoCreate)
         {
             var card = new Card
             {
@@ -57,27 +104,45 @@ namespace Daily.Planner.with.God.Api.Controllers
                 OriginalUserId = cardtoCreate.UserId
             };
 
-            return await _cardService.CreateCardAsync(card);
+            var createdCard = await _cardService.CreateCardAsync(card);
+
+            var cardDto = new CardInfoDto();
+
+            if (createdCard.Success && createdCard.Data != null)
+            {
+                cardDto = await _cardService.GetCustomCardInfoAsync(card);
+            }
+
+            return new ActionResult<ResponseMessage<CardInfoDto>>(new ResponseMessage<CardInfoDto>
+            {
+                Data = cardDto,
+                Message = createdCard.Message,
+                Success = createdCard.Success
+            });
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ResponseMessage<bool>> UpdateCard(CardUpdateDto cardToUpdate)
         {
             var cardResponse = await _cardService.GetCardAsync(cardToUpdate.Id);
             if (cardResponse.Success)
             {
                 var card = cardResponse.Data;
+                var userData = await _userService.GetUserAsync(card.UserId);
                 _mapper.Map(cardToUpdate, card);
-                return await _cardService.UpdateCardAsync(card);
-            }
-            else
-            {
-                return new ResponseMessage<bool>
+                card.OriginalUser = userData.Success ? userData.Data : null;
+                card.OriginalUserId = userData.Success ? userData.Data.Id : Guid.Empty;
+                var cardUpdated = await _cardService.UpdateCardAsync(card);
+                if (cardUpdated.Success)
                 {
-                    Success = false,
-                    Message = "Card not found"
-                };
+                    return cardUpdated;
+                }
             }
+            return new ResponseMessage<bool>
+            {
+                Success = false,
+                Message = "Card not found"
+            };
         }
 
         [HttpDelete("{id}")]

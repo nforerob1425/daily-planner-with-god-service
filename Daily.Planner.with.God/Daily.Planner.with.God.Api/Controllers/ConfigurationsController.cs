@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Domain.Entities;
 using Daily.Planner.with.God.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ConfigurationsController : ControllerBase
     {
         private readonly IConfigurationService _configurationService;
@@ -52,7 +54,7 @@ namespace Daily.Planner.with.God.Api.Controllers
             return BadRequest(response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult<ResponseMessage<bool>>> UpdateConfiguration(Configuration configuration)
         {
             var response = await _configurationService.UpdateConfigurationAsync(configuration);

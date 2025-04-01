@@ -15,5 +15,8 @@ namespace Daily.Planner.with.God.Domain.Entities
         public string Content { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public bool IsGlobal { get; set; }
+        public Guid? UserCreatedId { get; set; }
+        public User? UserCreated { get; set; }
     }
 }

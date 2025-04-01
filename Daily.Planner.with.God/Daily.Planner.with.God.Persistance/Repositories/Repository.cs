@@ -104,8 +104,8 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             var response = new ResponseMessage<bool>();
             try
             {
-                var configuration = await _context.Configurations.FindAsync(id);
-                if (configuration == null)
+                var entity = await _context.Set<T>().FindAsync(id);
+                if (entity == null)
                 {
                     response.Data = false;
                     response.Success = true;
@@ -113,7 +113,7 @@ namespace Daily.Planner.with.God.Persistance.Repositories
                 }
                 else
                 {
-                    _context.Configurations.Remove(configuration);
+                    _context.Set<T>().Remove(entity);
                     await _context.SaveChangesAsync();
                     response.Data = true;
                     response.Success = true;
@@ -124,6 +124,13 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             {
                 response.Success = false;
                 response.Message = $"Error deleting {typeof(T).Name}: {id}, Error: {ex.Message}";
+
+                Exception inner = ex.InnerException;
+                while (inner != null)
+                {
+                    response.Message += $" | InnerError: {inner.Message}";
+                    inner = inner.InnerException;
+                }
             }
 
             return response;

@@ -30,6 +30,19 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
+        public async Task<ResponseMessage<List<Agenda>>> GetAgendasAsync(bool isMale)
+        {
+            try
+            {
+                return await _agendaRepository.GetAgendasAsync(isMale);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<ResponseMessage<Agenda?>> GetAgendaAsync(Guid id)
         {
             try

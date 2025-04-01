@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Domain.Entities;
 using Daily.Planner.with.God.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AgendasController : ControllerBase
     {
         private readonly IAgendaService _agendaService;
@@ -20,9 +22,9 @@ namespace Daily.Planner.with.God.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseMessage<List<Agenda>>>> GetAgendas()
+        public async Task<ActionResult<ResponseMessage<List<Agenda>>>> GetAgendasByGender(bool isMale)
         {
-            var response = await _agendaService.GetAgendasAsync();
+            var response = await _agendaService.GetAgendasAsync(isMale);
             if (response.Success)
             {
                 return Ok(response);

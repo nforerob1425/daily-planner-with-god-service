@@ -5,6 +5,15 @@ namespace Daily.Planner.with.God.Persistance.Repositories
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
-        public UserRepository(ApplicationDbContext context) : base(context) { }
+        private readonly ApplicationDbContext _context;
+        public UserRepository(ApplicationDbContext context) : base(context) 
+        {
+            _context = context;
+        }
+
+        public async Task<User?> GetUserByUserNameAsync(string username)
+        {
+            return _context.Users.Where(u => u.Username == username).FirstOrDefault();
+        }
     }
 }

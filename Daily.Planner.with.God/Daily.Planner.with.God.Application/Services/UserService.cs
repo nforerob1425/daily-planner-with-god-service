@@ -82,5 +82,18 @@ namespace Daily.Planner.with.God.Application.Services
                 throw;
             }
         }
+
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            try
+            {
+                return await _userRepository.GetUserByUserNameAsync(username);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
