@@ -8,6 +8,7 @@ namespace Daily.Planner.with.God.Application.Interfaces
 {
     public interface IAgendaService
     {
+        Task<ResponseMessage<List<Agenda>>> GetAgendasAsync();
         Task<ResponseMessage<List<Agenda>>> GetAgendasAsync(bool isMale);
         Task<ResponseMessage<Agenda?>> GetAgendaAsync(Guid id);
         Task<ResponseMessage<Agenda>> CreateAgendaAsync(Agenda agenda);
