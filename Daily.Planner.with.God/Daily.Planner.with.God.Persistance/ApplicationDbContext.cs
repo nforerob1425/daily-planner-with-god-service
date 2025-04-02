@@ -17,6 +17,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Agenda> Agendas { get; set; }
     public DbSet<Petition> Petitions { get; set; }
     public DbSet<PetitionType> PetitionTypes { get; set; }
+    public DbSet<ApplicationConfig> ApplicationConfigs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -164,6 +165,15 @@ public class ApplicationDbContext : DbContext
                 Name = "Otro",
                 Icon = "mdi-comment-question-outline",
                 Color = "#FFFFFF"
+            }
+        );
+
+        modelBuilder.Entity<ApplicationConfig>().HasData(
+            new ApplicationConfig
+            {
+                Id = Guid.Parse("026F5F5C-97BC-4BF2-8B72-9D8D0B6B0694"),
+                Name = "HomeVideoUrl",
+                Value = "https://www.youtube.com/watch?v=Q9QoXR_5Qzs&list=PLt7-BTVbUMJne1HPcFvTt-Z8XxUSQCp0o"
             }
         );
     }

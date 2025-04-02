@@ -6,6 +6,7 @@ using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Domain.Entities;
 using Daily.Planner.with.God.Common;
 using Microsoft.AspNetCore.Authorization;
+using Daily.Planner.with.God.Application.Dtos;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
@@ -15,21 +16,70 @@ namespace Daily.Planner.with.God.Api.Controllers
     public class AdsController : ControllerBase
     {
         private readonly IAdsService _adsService;
+        private readonly IUserService _userService;
+        private readonly IRolService _roleService;
 
-        public AdsController(IAdsService adsService)
+        public AdsController(IAdsService adsService, IUserService userService, IRolService roleService)
         {
             _adsService = adsService;
+            _userService = userService;
+            _roleService = roleService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseMessage<List<Ads>>>> GetAds()
+        public async Task<ActionResult<ResponseMessage<List<AdsInfoDto>>>> GetAds()
         {
-            var response = await _adsService.GetAdsAsync();
-            if (response.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return Ok(response);
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var userData = await _userService.GetUserAsync(userId);
+
+                if (userData.Success)
+                {
+                    var adsData = await _adsService.GetAdsAsync(userId);
+                    if (adsData.Success)
+                    {
+                        var adsResponse = new List<AdsInfoDto>();
+                        ResponseMessage<User?> userAdData = new ResponseMessage<User?>();
+                        foreach (var ads in adsData.Data)
+                        {
+                            if(ads.UserCreatedId != null)
+                            {
+                                userAdData = await _userService.GetUserAsync((Guid)ads.UserCreatedId);
+                            }
+                            
+                            var ad = new AdsInfoDto()
+                            {
+                                Id = ads.Id,
+                                Content = ads.Content,
+                                EndDate = ads.EndDate,
+                                IsGlobal = ads.IsGlobal,
+                                StartDate = ads.StartDate,
+                                Title = ads.Title,
+                                UserCreatedId = ads.UserCreatedId,
+                                UserCreatedName = ads.UserCreatedId != null ? userAdData.Data.FirstName + " " + userAdData.Data.LastName : ""
+                            };
+
+                            adsResponse.Add(ad);
+                        }
+
+                        var response = new ResponseMessage<List<AdsInfoDto>>() 
+                        { 
+                            Data = adsResponse,
+                            Message = adsData.Message,
+                            Success = adsData.Success,
+                        };
+                        
+                        return Ok(response);
+                    }
+                    
+                }
+                
             }
-            return BadRequest(response);
+            
+            return Unauthorized();
+            
+            
         }
 
         [HttpGet("{id}")]
@@ -46,12 +96,35 @@ namespace Daily.Planner.with.God.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ResponseMessage<Ads>>> CreateAd(Ads ad)
         {
-            var response = await _adsService.CreateAdAsync(ad);
-            if (response.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return CreatedAtAction(nameof(GetAd), new { id = response.Data.Id }, response);
-            }
-            return BadRequest(response);
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var userData = await _userService.GetUserAsync(userId);
+
+                if(userData.Success)
+                {
+                    var roleData = await _roleService.GetRoleAsync(userData.Data.RoleId);
+
+                    if (roleData.Success && (roleData.Data.Name == "Admin" || roleData.Data.Name == "Moderador" || roleData.Data.Name == "Pastor"))
+                    {
+                        ad.IsGlobal = true;
+                    }
+                    else
+                    {
+                        ad.IsGlobal = false;
+                        ad.UserCreated = userData.Data;
+                        ad.UserCreatedId = userData.Data.Id;
+                    }
+
+                    var response = await _adsService.CreateAdAsync(ad);
+                    if (response.Success)
+                    {
+                        return CreatedAtAction(nameof(GetAd), new { id = response.Data.Id }, response);
+                    }
+                }
+            } 
+
+            return BadRequest();            
         }
 
         [HttpPut("{id}")]

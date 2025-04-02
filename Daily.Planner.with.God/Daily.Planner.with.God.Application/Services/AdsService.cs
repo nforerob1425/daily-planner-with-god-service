@@ -16,12 +16,24 @@ namespace Daily.Planner.with.God.Application.Services
         {
             _adsRepository = adsRepository;
         }
-
         public async Task<ResponseMessage<List<Ads>>> GetAdsAsync()
         {
             try
             {
                 return await _adsRepository.GetAllAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<ResponseMessage<List<Ads>>> GetAdsAsync(Guid userId)
+        {
+            try
+            {
+                return await _adsRepository.GetAllAsync(userId);
             }
             catch (Exception)
             {

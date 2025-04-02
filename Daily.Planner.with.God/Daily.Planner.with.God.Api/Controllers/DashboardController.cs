@@ -74,8 +74,8 @@ namespace Daily.Planner.with.God.Api.Controllers
                 DateTime lastYear = DateTime.Now.AddYears(-1);
                 DateTime lastLastYear = DateTime.Now.AddYears(-2);
 
-                var topColors = cardsData.Data.Where(c => c.UserId == c.OriginalUserId).GroupBy(c => c.PrimaryColorId).Select(g => new { Id = g.Key }).ToList();
-                var topPetitions = petitionsData.Data.GroupBy(p => p.PetitionTypeId).Select(g => new { Id = g.Key }).ToList();
+                var topColors = cardsData.Data.Where(c => c.UserId == c.OriginalUserId).GroupBy(c => c.PrimaryColorId).Select(g => new { Id = g.Key, Total = g.Count() }).OrderByDescending(c => c.Total).ToList();
+                var topPetitions = petitionsData.Data.GroupBy(p => p.PetitionTypeId).Select(g => new { Id = g.Key, Total = g.Count() }).OrderByDescending(c => c.Total).ToList();
 
                 var primaryBackgroundId = typesData.Data.Where(r => r.Name == "Primary Background").FirstOrDefault().Id;
                 var primaryLetterId = typesData.Data.Where(r => r.Name == "Primary Letter").FirstOrDefault().Id;

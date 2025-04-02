@@ -8,6 +8,6 @@ namespace Daily.Planner.with.God.Persistance.Interfaces
 {
     public interface IAdsRepository : IRepository<Ads>
     {
-        
+        Task<ResponseMessage<List<Ads>>> GetAllAsync(Guid userId);
     }
 }

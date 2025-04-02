@@ -44,6 +44,7 @@ internal class Program
         services.AddScoped<ITypeRepository, TypeRepository>();
         services.AddScoped<IPetitionRepository, PetitionRepository>();
         services.AddScoped<IPetitionTypeRepository, PetitionTypeRepository>();
+        services.AddScoped<IApplicationConfigRepository, ApplicationConfigRepository>();
 
         services.AddScoped<ICardService, CardService>();
         services.AddScoped<IUserService, UserService>();
@@ -56,6 +57,7 @@ internal class Program
         services.AddScoped<ITypeService, TypeService>();
         services.AddScoped<IPetitionService, PetitionService>();
         services.AddScoped<IPetitionTypesService, PetitionTypesService>();
+        services.AddScoped<IApplicationConfigServices, ApplicationConfigServices>();
 
         services.AddControllers();
 

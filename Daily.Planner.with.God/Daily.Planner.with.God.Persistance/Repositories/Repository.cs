@@ -17,10 +17,10 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             var response = new ResponseMessage<List<T>>();
             try
             {
-                var configurations = await _context.Set<T>().ToListAsync();
+                var entities = await _context.Set<T>().ToListAsync();
                 response = new ResponseMessage<List<T>>
                 {
-                    Data = configurations,
+                    Data = entities,
                     Message = $"{typeof(T).Name} found",
                     Success = true
                 };
@@ -39,12 +39,12 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             var response = new ResponseMessage<T?>();
             try
             {
-                var configuration = await _context.Set<T>().FindAsync(id);
+                var entity = await _context.Set<T>().FindAsync(id);
                 response = new ResponseMessage<T?>
                 {
-                    Data = configuration,
-                    Message = configuration == null ? $"{typeof(T).Name} not found with id: {id}" : $"{typeof(T).Name} found",
-                    Success = configuration != null
+                    Data = entity,
+                    Message = entity == null ? $"{typeof(T).Name} not found with id: {id}" : $"{typeof(T).Name} found",
+                    Success = entity != null
                 };
             }
             catch (Exception ex)

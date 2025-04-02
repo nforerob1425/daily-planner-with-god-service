@@ -15,12 +15,22 @@ namespace Daily.Planner.with.God.Api.Controllers
         private readonly IAgendaService _agendaService;
         private readonly IColorPalettService _colorPalettService;
         private readonly ITypeService _typeService;
+        private readonly IApplicationConfigServices _applicationConfigServices;
 
-        public AppAdministrationController(IAgendaService agendaService, IColorPalettService colorPalettService, ITypeService typeService)
+        public AppAdministrationController(IAgendaService agendaService, IColorPalettService colorPalettService, ITypeService typeService, IApplicationConfigServices applicationConfigServices)
         {
             _agendaService = agendaService;
             _colorPalettService = colorPalettService;
             _typeService = typeService;
+            _applicationConfigServices = applicationConfigServices;
+        }
+
+        [HttpGet]
+        [Route("appConfigs")]
+        public async Task<ResponseMessage<List<ApplicationConfig>>> GetAllAppConfigs()
+        {
+            var appConfigs = await _applicationConfigServices.GetApplicationConfigsAsync();
+            return appConfigs;
         }
 
         [HttpGet]
@@ -130,6 +140,14 @@ namespace Daily.Planner.with.God.Api.Controllers
             };
 
             var updated = await _colorPalettService.UpdateColorPalettAsync(colorPalette);
+            return updated;
+        }
+
+        [HttpPost]
+        [Route("appConfigs")]
+        public async Task<ResponseMessage<bool>> UpdateAppConfigs(ApplicationConfig appConfig)
+        {
+            var updated = await _applicationConfigServices.UpdateApplicationConfigAsync(appConfig);
             return updated;
         }
 
