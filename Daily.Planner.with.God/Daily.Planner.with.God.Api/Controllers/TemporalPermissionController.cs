@@ -62,7 +62,7 @@ namespace Daily.Planner.with.God.Api.Controllers
             return createdData;
         }
 
-        [HttpDelete]
+        [HttpDelete("{tpId}")]
         public async Task<ResponseMessage<bool>> DeleteNote(Guid tpId)
         {
             var deletedData = await _temporalPermissionService.DeleteAsync(tpId);
