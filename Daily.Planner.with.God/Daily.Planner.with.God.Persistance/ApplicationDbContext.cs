@@ -18,6 +18,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Petition> Petitions { get; set; }
     public DbSet<PetitionType> PetitionTypes { get; set; }
     public DbSet<ApplicationConfig> ApplicationConfigs { get; set; }
+    public DbSet<Note> Notes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,6 +99,18 @@ public class ApplicationDbContext : DbContext
             .WithMany(r => r.Ads)
             .HasForeignKey(c => c.UserCreatedId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Note>()
+            .HasOne(c => c.Agenda)
+            .WithMany(cp => cp.Notes)
+            .HasForeignKey(c => c.AgendaId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Note>()
+           .HasOne(c => c.User)
+           .WithMany(r => r.Notes)
+           .HasForeignKey(c => c.UserId)
+           .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);
 

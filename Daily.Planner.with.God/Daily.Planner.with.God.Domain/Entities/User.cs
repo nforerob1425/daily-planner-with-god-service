@@ -25,5 +25,6 @@ namespace Daily.Planner.with.God.Domain.Entities
         public ICollection<Card> Cards { get; set; }
         public bool IsMale { get; set; } = true;
         public ICollection<Ads> Ads { get; set; }
+        public ICollection<Note> Notes { get; set; }
     }
 }

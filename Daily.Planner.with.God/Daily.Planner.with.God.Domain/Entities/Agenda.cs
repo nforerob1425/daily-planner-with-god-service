@@ -22,5 +22,6 @@ namespace Daily.Planner.with.God.Domain.Entities
 
         [JsonIgnore]
         public Agenda OriginalAgenda { get; set; }
+        public ICollection<Note> Notes { get; set; }
     }
 }
