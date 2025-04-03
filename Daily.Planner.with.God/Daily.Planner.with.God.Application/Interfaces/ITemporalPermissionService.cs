@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Daily.Planner.with.God.Common;
+using Daily.Planner.with.God.Domain.Entities;
+
+namespace Daily.Planner.with.God.Application.Interfaces
+{
+    public interface ITemporalPermissionService
+    {
+        Task<ResponseMessage<List<TemporalPermission>>> GetAllAsync();
+        Task<ResponseMessage<TemporalPermission>> CreateAsync(TemporalPermission type);
+        Task<ResponseMessage<bool>> DeleteAsync(Guid id);
+    }
+}

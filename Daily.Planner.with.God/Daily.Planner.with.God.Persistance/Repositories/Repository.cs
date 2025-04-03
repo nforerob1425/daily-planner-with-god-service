@@ -29,6 +29,12 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             {
                 response.Message = $"Error getting {typeof(T).Name}s, Error: {ex.Message}";
                 response.Success = false;
+                Exception inner = ex.InnerException;
+                while (inner != null)
+                {
+                    response.Message += $" | InnerError: {inner.Message}";
+                    inner = inner.InnerException;
+                }
             }
 
             return response;
@@ -51,6 +57,12 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             {
                 response.Message = $"Error getting {typeof(T).Name}: {id}, Error: {ex.Message}";
                 response.Success = false;
+                Exception inner = ex.InnerException;
+                while (inner != null)
+                {
+                    response.Message += $" | InnerError: {inner.Message}";
+                    inner = inner.InnerException;
+                }
             }
 
             return response;
@@ -74,6 +86,12 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             {
                 response.Message = $"Error creating {typeof(T).Name}, Error: {ex.Message}";
                 response.Success = false;
+                Exception inner = ex.InnerException;
+                while (inner != null)
+                {
+                    response.Message += $" | InnerError: {inner.Message}";
+                    inner = inner.InnerException;
+                }
             }
             return response;
         }
@@ -94,6 +112,12 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             {
                 response.Success = false;
                 response.Message = $"Error updating {typeof(T).Name}, Error: {ex.Message}";
+                Exception inner = ex.InnerException;
+                while (inner != null)
+                {
+                    response.Message += $" | InnerError: {inner.Message}";
+                    inner = inner.InnerException;
+                }
             }
 
             return response;

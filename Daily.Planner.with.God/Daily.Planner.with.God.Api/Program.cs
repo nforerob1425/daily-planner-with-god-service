@@ -46,6 +46,7 @@ internal class Program
         services.AddScoped<IPetitionTypeRepository, PetitionTypeRepository>();
         services.AddScoped<IApplicationConfigRepository, ApplicationConfigRepository>();
         services.AddScoped<INoteRepository, NoteRepository>();
+        services.AddScoped<ITemporalPermissionRepository, TemporalPermissionRepository>();
 
         services.AddScoped<ICardService, CardService>();
         services.AddScoped<IUserService, UserService>();
@@ -60,6 +61,7 @@ internal class Program
         services.AddScoped<IPetitionTypesService, PetitionTypesService>();
         services.AddScoped<IApplicationConfigServices, ApplicationConfigServices>();
         services.AddScoped<INoteService, NoteService>();
+        services.AddScoped<ITemporalPermissionService, TemporalPermissionService>();
 
         services.AddControllers();
 

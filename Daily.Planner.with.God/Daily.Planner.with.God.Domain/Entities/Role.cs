@@ -14,5 +14,6 @@ namespace Daily.Planner.with.God.Domain.Entities
         public string Name { get; set; }
         public int Scale { get; set; }
         public ICollection<User> Users { get; set; }
+        public ICollection<TemporalPermission> TemporalPermissions { get; set; }
     }
 }
