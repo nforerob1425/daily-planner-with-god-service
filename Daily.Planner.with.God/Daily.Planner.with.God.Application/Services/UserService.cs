@@ -110,31 +110,21 @@ namespace Daily.Planner.with.God.Application.Services
 
                 if (userData.Success)
                 {
-                    var tpData = await _temporalPermissionRepository.GetByRoleIdAsync(userData.Data.RoleId);
-                    if(tpData.Success)
-                    {
-                        foreach (var item in tpData.Data)
-                        {
-                            var permissionData = await _permissionRepository.GetByIdAsync(item.PermissionId);
-                            if (permissionData.Success && permissionData.Data != null)
-                            {
-                                permisions.Add(permissionData.Data.SystemName);
-                            }
-                        }
+                    permisions = await GetPermissionsByRoleId(userData.Data.RoleId);
 
-                        foreach (var permission in permissionValues)
+                    foreach (var permission in permissionValues)
+                    {
+                        if (permisions.Contains(permission))
                         {
-                            if (permisions.Contains(permission))
-                            {
-                                response = true;
-                            }
-                            else
-                            {
-                                response = false;
-                                break;
-                            }
+                            response = true;
+                        }
+                        else
+                        {
+                            response = false;
+                            break;
                         }
                     }
+                    
                 }
 
                 return response;
@@ -142,6 +132,33 @@ namespace Daily.Planner.with.God.Application.Services
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public async Task<List<string>> GetPermissionsByRoleId(Guid roleId)
+        {
+            try
+            {
+                var permisions = new List<string>();
+                
+                var tpData = await _temporalPermissionRepository.GetByRoleIdAsync(roleId);
+                if (tpData.Success)
+                {
+                    foreach (var item in tpData.Data)
+                    {
+                        var permissionData = await _permissionRepository.GetByIdAsync(item.PermissionId);
+                        if (permissionData.Success && permissionData.Data != null)
+                        {
+                            permisions.Add(permissionData.Data.SystemName);
+                        }
+                    }
+                }
+                
+                return permisions;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

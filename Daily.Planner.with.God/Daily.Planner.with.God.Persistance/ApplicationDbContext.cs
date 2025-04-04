@@ -219,6 +219,12 @@ public class ApplicationDbContext : DbContext
                 Id = Guid.Parse("026F5F5C-97BC-4BF2-8B72-9D8D0B6B0694"),
                 Name = "HomeVideoUrl",
                 Value = "https://www.youtube.com/watch?v=Q9QoXR_5Qzs&list=PLt7-BTVbUMJne1HPcFvTt-Z8XxUSQCp0o"
+            },
+            new ApplicationConfig
+            {
+                Id = Guid.Parse("CD2751F7-7614-40B9-9FA8-1B1344B5C746"),
+                Name = "SupportEmail",
+                Value = "Test@test.com"
             }
         );
 

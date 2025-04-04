@@ -15,5 +15,6 @@ namespace Daily.Planner.with.God.Application.Interfaces
         Task<ResponseMessage<bool>> DeleteUserAsync(Guid id);
         Task<User?> GetUserByUsernameAsync(string username);
         Task<bool> ValidAccessPermissionAsync(Guid userId, List<string> permissionValues);
+        Task<List<string>> GetPermissionsByRoleId(Guid roleId);
     }
 }

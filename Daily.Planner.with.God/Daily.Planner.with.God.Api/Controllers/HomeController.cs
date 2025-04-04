@@ -41,7 +41,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     }
                     if (await _userService.ValidAccessPermissionAsync(userId, ["CSPTV"]) && userData.Data.LeadId != null)
                     {
-                        response.Data.Add(new MenuInfoDto { Title = "Maneja tus peticiones de oración", Icon = "mdi-clipboard-text", Route = "/petitions" });
+                        response.Data.Add(new MenuInfoDto { Title = "Tus peticiones de oración", Icon = "mdi-clipboard-text", Route = "/petitions" });
                     }
                     if (await _userService.ValidAccessPermissionAsync(userId, ["CSPRV"]))
                     {
@@ -70,6 +70,8 @@ namespace Daily.Planner.with.God.Api.Controllers
 
                     if (response.Data.Count > 0)
                     {
+                        response.Message = "Menu loaded successfully";
+                        response.Success = true;
                         return Ok(response);
                     }
                 }

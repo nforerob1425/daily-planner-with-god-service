@@ -168,6 +168,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     IsMale = user.IsMale,
                     HasLead = !string.IsNullOrEmpty(user.LeadId?.ToString()),
                     ConfigurationId = user.ConfigurationId,
+                    Permissions = await _userService.GetPermissionsByRoleId(user.RoleId)
                 };
 
                 var response = new ResponseMessage<LoginUserDto>()
@@ -184,9 +185,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 return BadRequest();
                 throw;
             }
-            
         }
-
 
         private string GenerateJwtToken(User user)
         {

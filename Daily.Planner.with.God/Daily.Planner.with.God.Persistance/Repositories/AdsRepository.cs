@@ -28,11 +28,27 @@ namespace Daily.Planner.with.God.Persistance.Repositories
                 
                 if (currentUser.LeadId == null)
                 {
-                    ads = await _context.Ads.Where(a => a.UserCreatedId == currentUser.Id || a.IsGlobal && (a.EndDate >= now && a.StartDate <= now)).ToListAsync();
+                    ads = await _context.Ads
+                                        .Where(a =>
+                                            ((a.UserCreatedId == currentUser.Id || a.UserCreatedId == currentUser.LeadId)
+                                            &&
+                                            a.EndDate >= now && a.StartDate <= now)
+                                            ||
+                                            (a.IsGlobal && (a.EndDate >= now && a.StartDate <= now))
+                                        )
+                                        .ToListAsync();
                 }
                 else 
                 {
-                    ads = await _context.Ads.Where(a => (a.UserCreatedId == currentUser.Id || a.UserCreatedId == currentUser.LeadId) || a.IsGlobal && (a.EndDate >= now && a.StartDate <= now)).ToListAsync();
+                    ads = await _context.Ads
+                                        .Where(a =>
+                                            ((a.UserCreatedId == currentUser.Id || a.UserCreatedId == currentUser.LeadId)
+                                            &&
+                                            a.EndDate >= now && a.StartDate <= now)
+                                            ||
+                                            (a.IsGlobal && (a.EndDate >= now && a.StartDate <= now))
+                                        )
+                                        .ToListAsync();
                 }
                  
                 response = new ResponseMessage<List<Ads>>

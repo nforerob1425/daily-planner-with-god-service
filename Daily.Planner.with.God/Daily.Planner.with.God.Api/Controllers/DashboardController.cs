@@ -112,7 +112,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                         ReportedCards = cardsData.Data.Where(c => c.OriginalUserId != c.UserId).ToList().Count,
                         TotalCardsLastMonth = cardsData.Data.Where(c => c.CreateDate >= lastMonth && c.UserId == c.OriginalUserId).ToList().Count,
                         TotalCardsLastYear = cardsData.Data.Where(c => c.CreateDate >= lastYear && c.UserId == c.OriginalUserId).ToList().Count,
-                        TotalCardsLastLastYear = cardsData.Data.Where(c => c.CreateDate >= lastLastYear && c.UserId == c.OriginalUserId).ToList().Count,
+                        TotalCardsYearBeforeLast = cardsData.Data.Where(c => c.CreateDate >= lastLastYear && c.UserId == c.OriginalUserId).ToList().Count,
                         TopOneColorSelected = colorsData.Data.FirstOrDefault(t => t.Id == topColors.ElementAtOrDefault(0)?.Id)?.Color ?? string.Empty,
                         TopTwoColorSelected = colorsData.Data.FirstOrDefault(t => t.Id == topColors.ElementAtOrDefault(1)?.Id)?.Color ?? string.Empty,
                         TopThreeColorSelected = colorsData.Data.FirstOrDefault(t => t.Id == topColors.ElementAtOrDefault(2)?.Id)?.Color ?? string.Empty,
