@@ -20,25 +20,39 @@ namespace Daily.Planner.with.God.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ResponseMessage<bool>>> UpdatePasswordAsync(NewPasswordDto newPassword)
         {
-            var userData = await _userService.GetUserAsync(newPassword.UserId);
-            var response = new ResponseMessage<bool>()
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Success = false,
-                Message = userData.Message
-            };
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CUPS"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            if (userData.Success)
-            {
-                var encriptedPassword = EncryptionHelper.EncryptString(newPassword.NewPassword);
-                userData.Data.Password = encriptedPassword;
+                var userData = await _userService.GetUserAsync(newPassword.UserId);
+                var response = new ResponseMessage<bool>()
+                {
+                    Success = false,
+                    Message = userData.Message
+                };
 
-                var userUpdated = await _userService.UpdateUserAsync(userData.Data);
-                response.Success = userUpdated.Success;
-                response.Message = response.Success ? "Se actualizo correctamente tu contraseña" : response.Message;
-                response.Data = response.Data;
+                if (userData.Success)
+                {
+                    var encriptedPassword = EncryptionHelper.EncryptString(newPassword.NewPassword);
+                    userData.Data.Password = encriptedPassword;
+
+                    var userUpdated = await _userService.UpdateUserAsync(userData.Data);
+                    response.Success = userUpdated.Success;
+                    response.Message = response.Success ? "Se actualizo correctamente tu contraseña" : response.Message;
+                    response.Data = response.Data;
+                }
+
+                return response;
             }
-
-            return response;
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

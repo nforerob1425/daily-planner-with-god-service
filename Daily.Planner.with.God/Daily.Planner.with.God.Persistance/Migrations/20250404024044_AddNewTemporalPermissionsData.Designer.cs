@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Daily.Planner.with.God.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250404024044_AddNewTemporalPermissionsData")]
+    partial class AddNewTemporalPermissionsData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -348,9 +351,6 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Priority")
-                        .HasColumnType("integer");
-
                     b.Property<string>("SystemName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -364,343 +364,294 @@ namespace Daily.Planner.with.God.Persistance.Migrations
                         {
                             Id = new Guid("05958f1c-844a-43e9-9bcb-6667dad75670"),
                             Description = "Puede ver la vista de Administracion de usuarios",
-                            Priority = 1,
                             SystemName = "CSUV"
                         },
                         new
                         {
                             Id = new Guid("0678fae5-e577-4fd5-a759-ae3fb0fd9d6b"),
                             Description = "Puede ver las agendas",
-                            Priority = 2,
                             SystemName = "CSAG"
                         },
                         new
                         {
                             Id = new Guid("0a1f874b-af1c-4b3f-8d3e-2714eb2a6ca4"),
                             Description = "Puede crear tarjetas",
-                            Priority = 2,
                             SystemName = "CCCD"
                         },
                         new
                         {
                             Id = new Guid("0aaa962a-8d64-4515-9659-63e37f98c8ca"),
                             Description = "Puede actualizar las configuraciones del sistema",
-                            Priority = 4,
                             SystemName = "CUAP"
                         },
                         new
                         {
                             Id = new Guid("0fe9b79f-8bf5-4742-8284-5414494988b0"),
                             Description = "Puede actualizar sus anuncios",
-                            Priority = 3,
                             SystemName = "CUNW"
                         },
                         new
                         {
                             Id = new Guid("161ab07a-92d0-422e-a7df-20e69238dad7"),
                             Description = "Puede actualizar usuarios",
-                            Priority = 3,
                             SystemName = "CUUS"
                         },
                         new
                         {
                             Id = new Guid("19f3b0e7-cc0b-44ba-ad7f-3ad17bcc9949"),
                             Description = "Puede ver la vista del R07",
-                            Priority = 1,
                             SystemName = "CSPV"
                         },
                         new
                         {
                             Id = new Guid("1f52010f-c57c-4031-a666-4ad9c4076404"),
                             Description = "Puede actualizar peticiones",
-                            Priority = 3,
                             SystemName = "CUPT"
                         },
                         new
                         {
                             Id = new Guid("24395707-0c33-42fe-bc05-39bd9b5e0485"),
                             Description = "Puede crear anuncios",
-                            Priority = 3,
                             SystemName = "CCNW"
                         },
                         new
                         {
                             Id = new Guid("2ad66724-24d7-4a86-b512-7cf5a4c4bfc3"),
                             Description = "Puede asignar permisos temporales",
-                            Priority = 4,
                             SystemName = "CCTP"
                         },
                         new
                         {
                             Id = new Guid("2dd17f8f-6e80-4e60-919d-e304b90d0f46"),
                             Description = "Puede actualizar las configuraciones",
-                            Priority = 3,
                             SystemName = "CUCN"
                         },
                         new
                         {
                             Id = new Guid("2f6a2460-7e0c-4677-a9a7-0c90ac88e2c7"),
                             Description = "Puede eliminar peticiones",
-                            Priority = 2,
                             SystemName = "CDPT"
                         },
                         new
                         {
                             Id = new Guid("348f5ae9-8ee7-40e1-bd13-0166e437ed1b"),
                             Description = "Puede eliminar colores",
-                            Priority = 4,
                             SystemName = "CDCO"
                         },
                         new
                         {
                             Id = new Guid("3bd9aa44-f431-43a6-8b0a-ca99b77d100c"),
                             Description = "Puede eliminar tarjetas",
-                            Priority = 2,
                             SystemName = "CDCD"
                         },
                         new
                         {
                             Id = new Guid("3fb76b0e-bcf6-45a0-a141-42873cff242c"),
                             Description = "Puede ver las configuraciones del sistema",
-                            Priority = 2,
                             SystemName = "CSAP"
                         },
                         new
                         {
                             Id = new Guid("410edf32-53fb-4242-9ca1-009ae499fcca"),
                             Description = "Puede ver la vista de Solicitudes",
-                            Priority = 1,
                             SystemName = "CSEV"
                         },
                         new
                         {
                             Id = new Guid("489facd4-0546-4e91-9d2d-26afc5e60080"),
                             Description = "Puede ver la vista del Dashboard",
-                            Priority = 1,
                             SystemName = "CSDV"
                         },
                         new
                         {
                             Id = new Guid("4f7c081e-b834-4fed-acfb-10d54e8c8f11"),
                             Description = "Puede reportar tarjetas",
-                            Priority = 2,
                             SystemName = "CRCD"
                         },
                         new
                         {
                             Id = new Guid("503fc79e-3f52-435b-9222-254c8c1fc738"),
                             Description = "Puede ver la vista de Manejo de la aplicacion",
-                            Priority = 1,
-                            SystemName = "CSMAV"
+                            SystemName = "CSHV"
                         },
                         new
                         {
                             Id = new Guid("54b2a2a2-eccb-4241-8ece-d4e5a9beebaa"),
                             Description = "Puede actualizar colores",
-                            Priority = 4,
                             SystemName = "CUCO"
                         },
                         new
                         {
                             Id = new Guid("54e3c968-e8d4-4b43-87d6-6351076e0093"),
                             Description = "Puede eliminar usuarios",
-                            Priority = 4,
                             SystemName = "CDUS"
                         },
                         new
                         {
                             Id = new Guid("588ec542-ed55-4e66-9215-1c9216c5c914"),
                             Description = "Puede descargar el reporte del mes",
-                            Priority = 2,
                             SystemName = "CDWCD"
                         },
                         new
                         {
                             Id = new Guid("5bada406-7bf0-41e7-8f6c-52f65760181c"),
                             Description = "Puede ver la vista del Inicio",
-                            Priority = 1,
                             SystemName = "CSHV"
                         },
                         new
                         {
                             Id = new Guid("6a088364-cfa7-4e7c-8a31-17cddc9f1370"),
                             Description = "Puede ver los anuncios",
-                            Priority = 2,
                             SystemName = "CSNW"
                         },
                         new
                         {
                             Id = new Guid("717a6cae-0844-4666-9621-c7082a8b9539"),
                             Description = "Puede ver las configuraciones",
-                            Priority = 2,
                             SystemName = "CSCN"
                         },
                         new
                         {
                             Id = new Guid("72d1cb2c-30b0-4b6c-a9cd-d471940f7b93"),
                             Description = "Puede ver los colores",
-                            Priority = 2,
                             SystemName = "CSCO"
                         },
                         new
                         {
                             Id = new Guid("75cf41d2-ca8f-4cb0-a37c-e3b34ddcb8c9"),
                             Description = "Puede crear usuarios",
-                            Priority = 4,
                             SystemName = "CCUS"
                         },
                         new
                         {
                             Id = new Guid("7816c0b8-4db8-4a8b-b171-824a179709d2"),
                             Description = "Puede ver las tarjetas del R07",
-                            Priority = 2,
                             SystemName = "CSCD"
                         },
                         new
                         {
                             Id = new Guid("8682fd93-c365-48f6-a363-720fd272a589"),
                             Description = "Puede ver los permisos temporales",
-                            Priority = 4,
                             SystemName = "CSTP"
                         },
                         new
                         {
                             Id = new Guid("8cbaaf22-3f25-4e50-b4b9-cc5f4a78ba6c"),
                             Description = "Puede crear agendas",
-                            Priority = 4,
                             SystemName = "CCAG"
                         },
                         new
                         {
                             Id = new Guid("9054c555-4a30-495b-95d4-fff561ce11c6"),
                             Description = "Puede crear notas",
-                            Priority = 2,
                             SystemName = "CCNT"
                         },
                         new
                         {
                             Id = new Guid("90d0aaaf-793c-4cde-89ea-706cdd0c1a6d"),
                             Description = "Puede actualizar notas",
-                            Priority = 2,
                             SystemName = "CUNT"
                         },
                         new
                         {
                             Id = new Guid("929d0a6d-6b2d-4391-aa79-c4859b9cfa57"),
                             Description = "Puede eliminar agendas",
-                            Priority = 4,
                             SystemName = "CDAG"
                         },
                         new
                         {
                             Id = new Guid("a4f2229d-cd70-4c4f-a0fa-39e2f9e4a639"),
                             Description = "Puede ver los usuarios",
-                            Priority = 2,
                             SystemName = "CSUS"
                         },
                         new
                         {
                             Id = new Guid("b3deaccb-bd01-4cd6-a543-9a001a93101c"),
                             Description = "Puede ver las peticiones",
-                            Priority = 2,
                             SystemName = "CSPT"
                         },
                         new
                         {
                             Id = new Guid("ba75c802-413c-4209-abb5-d92fe883061c"),
                             Description = "Puede desasignar permisos temporales",
-                            Priority = 4,
                             SystemName = "CDTP"
                         },
                         new
                         {
                             Id = new Guid("bbb2b3dc-b3a5-4ce4-811c-7750cba00c59"),
                             Description = "Puede eliminar notas",
-                            Priority = 2,
                             SystemName = "CDNT"
                         },
                         new
                         {
                             Id = new Guid("c7f65971-5dcf-45e8-b146-3df6a710df2c"),
                             Description = "Puede eliminar sus anuncios",
-                            Priority = 3,
                             SystemName = "CDNW"
                         },
                         new
                         {
                             Id = new Guid("cbd3a20b-a12a-437d-b130-ef77cb174edf"),
                             Description = "Puede ver la vista de las Configuraciones",
-                            Priority = 1,
                             SystemName = "CSCV"
                         },
                         new
                         {
                             Id = new Guid("cc7d6a95-da2c-4eca-b0fd-7e711600027e"),
                             Description = "Puede ver la vista del Perfil",
-                            Priority = 1,
                             SystemName = "CSPRV"
                         },
                         new
                         {
                             Id = new Guid("d274575a-c4f2-4d0a-ab6a-c634fabf9c15"),
                             Description = "Puede actualizar agendas",
-                            Priority = 4,
                             SystemName = "CUAG"
                         },
                         new
                         {
                             Id = new Guid("dc508983-5917-4752-8ccc-1c6674234417"),
                             Description = "Puede crear colores",
-                            Priority = 4,
                             SystemName = "CCCO"
                         },
                         new
                         {
                             Id = new Guid("e7c19a6f-64d5-47a7-bb93-00aa103a884a"),
                             Description = "Puede ver sus notas",
-                            Priority = 2,
                             SystemName = "CSNT"
                         },
                         new
                         {
                             Id = new Guid("ee46d590-2457-4b01-95f1-3af291450552"),
                             Description = "Puede crear peticiones",
-                            Priority = 2,
                             SystemName = "CCPT"
                         },
                         new
                         {
                             Id = new Guid("f6042a14-5907-4a6e-9417-0519cc422160"),
                             Description = "Puede actualizar tarjetas",
-                            Priority = 2,
                             SystemName = "CUCD"
                         },
                         new
                         {
                             Id = new Guid("ffe00ecd-e320-4a9d-84d7-2d3b2d16aa7b"),
-                            Description = "Puede ver la vista de Manejar tus peticiones",
-                            Priority = 1,
+                            Description = "Puede ver la vista de Peticiones",
                             SystemName = "CSPTV"
                         },
                         new
                         {
                             Id = new Guid("96f97762-8b1e-46d8-8450-f52e85c2c2ac"),
                             Description = "Puede ver la clasificacion de los colores",
-                            Priority = 2,
                             SystemName = "CSTC"
                         },
                         new
                         {
                             Id = new Guid("95a80530-1b8a-4a6b-9c88-d0f57ad03fcb"),
                             Description = "Puede cambiar su contraseña",
-                            Priority = 2,
                             SystemName = "CUPS"
                         },
                         new
                         {
                             Id = new Guid("2a02728c-4408-4628-84bf-3b9650df5705"),
                             Description = "Puede ver los permisos del sistema",
-                            Priority = 4,
                             SystemName = "CSPM"
                         });
                 });

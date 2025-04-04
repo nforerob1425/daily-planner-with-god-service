@@ -11,10 +11,14 @@ namespace Daily.Planner.with.God.Application.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITemporalPermissionRepository _temporalPermissionRepository;
+        private readonly IPermissionRepository _permissionRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ITemporalPermissionRepository temporalPermissionRepository , IPermissionRepository permissionRepository)
         {
             _userRepository = userRepository;
+            _temporalPermissionRepository = temporalPermissionRepository;
+            _permissionRepository = permissionRepository;
         }
 
         public async Task<ResponseMessage<List<User>>> GetUsersAsync()
@@ -93,6 +97,51 @@ namespace Daily.Planner.with.God.Application.Services
             {
 
                 throw;
+            }
+        }
+
+        public async Task<bool> ValidAccessPermissionAsync(Guid userId, List<string> permissionValues)
+        {
+            try
+            {
+                var permisions = new List<string>();
+                var response = false;
+                var userData = await _userRepository.GetByIdAsync(userId);
+
+                if (userData.Success)
+                {
+                    var tpData = await _temporalPermissionRepository.GetByRoleIdAsync(userData.Data.RoleId);
+                    if(tpData.Success)
+                    {
+                        foreach (var item in tpData.Data)
+                        {
+                            var permissionData = await _permissionRepository.GetByIdAsync(item.PermissionId);
+                            if (permissionData.Success && permissionData.Data != null)
+                            {
+                                permisions.Add(permissionData.Data.SystemName);
+                            }
+                        }
+
+                        foreach (var permission in permissionValues)
+                        {
+                            if (permisions.Contains(permission))
+                            {
+                                response = true;
+                            }
+                            else
+                            {
+                                response = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

@@ -28,45 +28,86 @@ namespace Daily.Planner.with.God.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ResponseMessage<List<TemporalPermission>>>> GetAll()
         {
-            try
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Request.Headers.TryGetValue("UserId", out var currentUserId);
-                Guid userId = Guid.Parse(currentUserId.ToString());
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CSTP"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-                var notesData = await _temporalPermissionService.GetAllAsync();
-                return Ok(notesData);
+                try
+                {
+                    Guid userId = Guid.Parse(currentUserId.ToString());
+
+                    var notesData = await _temporalPermissionService.GetAllAsync();
+                    return Ok(notesData);
+
+                }
+                catch (Exception)
+                {
+                    return Unauthorized();
+                }
             }
-            catch (Exception)
+            else
             {
                 return Unauthorized();
             }
-
         }
 
         [HttpPost]
-        public async Task<ResponseMessage<TemporalPermission>> CreateNote(TemporalPermissionCreateDto tpToCreate)
+        public async Task<ActionResult<ResponseMessage<TemporalPermission>>> CreateNote(TemporalPermissionCreateDto tpToCreate)
         {
-            var tp = new TemporalPermission();
-            var roleData = await _rolService.GetRoleAsync(tpToCreate.RoleId);
-            var permissionData = await _permissionService.GetPermissionAsync(tpToCreate.PermissionId);
-
-            if (permissionData.Success && roleData.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                tp.RoleId = tpToCreate.RoleId;
-                tp.PermissionId = tpToCreate.PermissionId;
-                tp.Permission = permissionData.Data;
-                tp.Role = roleData.Data;
-            }
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CCTP"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            var createdData = await _temporalPermissionService.CreateAsync(tp);
-            return createdData;
+                var tp = new TemporalPermission();
+                var roleData = await _rolService.GetRoleAsync(tpToCreate.RoleId);
+                var permissionData = await _permissionService.GetPermissionAsync(tpToCreate.PermissionId);
+
+                if (permissionData.Success && roleData.Success)
+                {
+                    tp.RoleId = tpToCreate.RoleId;
+                    tp.PermissionId = tpToCreate.PermissionId;
+                    tp.Permission = permissionData.Data;
+                    tp.Role = roleData.Data;
+                }
+
+                var createdData = await _temporalPermissionService.CreateAsync(tp);
+                return createdData;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpDelete("{tpId}")]
-        public async Task<ResponseMessage<bool>> DeleteNote(Guid tpId)
+        public async Task<ActionResult<ResponseMessage<bool>>> DeleteNote(Guid tpId)
         {
-            var deletedData = await _temporalPermissionService.DeleteAsync(tpId);
-            return deletedData;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CDTP"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var deletedData = await _temporalPermissionService.DeleteAsync(tpId);
+                return deletedData;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

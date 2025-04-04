@@ -15,50 +15,33 @@ namespace Daily.Planner.with.God.API.Controllers
     public class PermissionController : ControllerBase
     {
         private readonly IPermissionService _permissionService;
+        private readonly IUserService _userService;
 
-        public PermissionController(IPermissionService permissionService)
+        public PermissionController(IPermissionService permissionService, IUserService userService)
         {
             _permissionService = permissionService;
+            _userService = userService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseMessage<List<Permission>>>> GetPermissions()
         {
-            var result = await _permissionService.GetPermissionsAsync();
-            return Ok(result);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseMessage<Permission?>>> GetPermission(Guid id)
-        {
-            var result = await _permissionService.GetPermissionAsync(id);
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ResponseMessage<Permission>>> CreatePermission(Permission permission)
-        {
-            var result = await _permissionService.CreatePermissionAsync(permission);
-            return CreatedAtAction(nameof(GetPermission), new { id = result.Data.Id }, result);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> UpdatePermission(Guid id, Permission permission)
-        {
-            if (id != permission.Id)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return BadRequest();
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CSPM"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var result = await _permissionService.GetPermissionsAsync();
+                return Ok(result);
             }
-
-            var result = await _permissionService.UpdatePermissionAsync(permission);
-            return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> DeletePermission(Guid id)
-        {
-            var result = await _permissionService.DeletePermissionAsync(id);
-            return Ok(result);
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Daily.Planner.with.God.Persistance.Interfaces
 {
     public interface INoteRepository : IRepository<Note>
     {
-        Task<ResponseMessage<List<Note>>> GetAllNotesByUserId(Guid userId, Guid agendaId);
+        Task<ResponseMessage<List<Note>>> GetAllNotesByUserIdAndAgendaId(Guid userId, Guid agendaId);
+        Task<ResponseMessage<List<Note>>> GetAllNotesByUserId(Guid userId);
     }
 }

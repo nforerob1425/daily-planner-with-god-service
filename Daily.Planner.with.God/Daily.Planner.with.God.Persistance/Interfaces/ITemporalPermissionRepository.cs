@@ -12,7 +12,7 @@ namespace Daily.Planner.with.God.Persistance.Interfaces
     {
         Task<ResponseMessage<List<TemporalPermission>>> GetAllAsync();
         Task<ResponseMessage<TemporalPermission>> CreateAsync(TemporalPermission entity);
-
         Task<ResponseMessage<bool>> DeleteAsync(Guid id);
+        Task<ResponseMessage<List<TemporalPermission>>> GetByRoleIdAsync(Guid roleId);
     }
 }

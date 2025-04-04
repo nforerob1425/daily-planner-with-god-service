@@ -24,38 +24,5 @@ namespace Daily.Planner.with.God.Api.Controllers
             var result = await _petitionTypesService.GetPetitionTypesAsync();
             return Ok(result);
         }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseMessage<PetitionType?>>> GetType(Guid id)
-        {
-            var result = await _petitionTypesService.GetPetitionTypeAsync(id);
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ResponseMessage<PetitionType>>> CreateType(PetitionType type)
-        {
-            var result = await _petitionTypesService.CreatePetitionTypeAsync(type);
-            return CreatedAtAction(nameof(GetType), new { id = result.Data.Id }, result);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> UpdateType(Guid id, PetitionType type)
-        {
-            if (id != type.Id)
-            {
-                return BadRequest();
-            }
-
-            var result = await _petitionTypesService.UpdatePetitionTypeAsync(type);
-            return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> DeleteType(Guid id)
-        {
-            var result = await _petitionTypesService.DeletePetitionTypeAsync(id);
-            return Ok(result);
-        }
     }
 }

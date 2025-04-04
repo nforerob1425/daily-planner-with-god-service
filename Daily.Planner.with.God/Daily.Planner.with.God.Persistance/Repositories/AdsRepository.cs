@@ -50,5 +50,31 @@ namespace Daily.Planner.with.God.Persistance.Repositories
 
             return response;
         }
+
+        public async Task<ResponseMessage<List<Ads>>> GetAlByUserIdAsync(Guid userId)
+        {
+            var response = new ResponseMessage<List<Ads>>();
+            try
+            {
+                DateTime now = DateTime.UtcNow;
+                List<Ads> ads = new List<Ads>();
+                
+                ads = await _context.Ads.Where(a => a.UserCreatedId == userId).ToListAsync();
+
+                response = new ResponseMessage<List<Ads>>
+                {
+                    Data = ads,
+                    Message = $"{typeof(Ads).Name} found",
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Error getting {typeof(Ads).Name}s, Error: {ex.Message}";
+                response.Success = false;
+            }
+
+            return response;
+        }
     }
 }

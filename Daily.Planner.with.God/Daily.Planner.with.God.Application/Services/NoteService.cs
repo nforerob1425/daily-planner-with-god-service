@@ -70,11 +70,25 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
+        public async Task<ResponseMessage<List<Note>>> GetNotesAsync(Guid userId)
+        {
+            try
+            {
+                var notes = await _noteRepository.GetAllNotesByUserId(userId);
+                return notes;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<ResponseMessage<List<Note>>> GetNotesAsync(Guid userId, Guid agendaId)
         {
             try
             {
-                var note = await _noteRepository.GetAllNotesByUserId(userId, agendaId);
+                var note = await _noteRepository.GetAllNotesByUserIdAndAgendaId(userId, agendaId);
                 return note;
             }
             catch (Exception)

@@ -96,5 +96,18 @@ namespace Daily.Planner.with.God.Application.Services
                 throw;
             }
         }
+
+        public async Task<ResponseMessage<List<Ads>>> GetAdsByUserIdAsync(Guid userId)
+        {
+            try
+            {
+                return await _adsRepository.GetAlByUserIdAsync(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

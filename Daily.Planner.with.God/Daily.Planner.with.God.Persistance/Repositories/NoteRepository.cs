@@ -13,7 +13,28 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             _context = context;
         }
 
-        public async Task<ResponseMessage<List<Note>>> GetAllNotesByUserId(Guid userId, Guid agendaId)
+        public async Task<ResponseMessage<List<Note>>> GetAllNotesByUserId(Guid userId)
+        {
+            var response = new ResponseMessage<List<Note>>();
+            try
+            {
+                var notes = await _context.Notes.Where(c => c.UserId == userId).ToListAsync();
+                response = new ResponseMessage<List<Note>>
+                {
+                    Data = notes,
+                    Message = $"Notes found for user: {userId}",
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Error getting cards for user: {userId}, Error: {ex.Message}";
+                response.Success = false;
+            }
+            return response;
+        }
+
+        public async Task<ResponseMessage<List<Note>>> GetAllNotesByUserIdAndAgendaId(Guid userId, Guid agendaId)
         {
             var response = new ResponseMessage<List<Note>>();
             try
@@ -33,5 +54,6 @@ namespace Daily.Planner.with.God.Persistance.Repositories
             }
             return response;
         }
+
     }
 }

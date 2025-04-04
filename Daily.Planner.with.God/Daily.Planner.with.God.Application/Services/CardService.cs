@@ -9,14 +9,14 @@ namespace Daily.Planner.with.God.Application.Services
     public class CardService : ICardService
     {
         private readonly ICardRepository _cardRepository;
-        private readonly IColorPalettService _colorPalettService;
-        private readonly IUserService _userService;
+        private readonly IColorPalettRepository _colorPalettRepository;
+        private readonly IUserRepository _userRepository;
 
-        public CardService(ICardRepository cardRepository, IColorPalettService colorPalettService, IUserService userService)
+        public CardService(ICardRepository cardRepository, IColorPalettRepository colorPalettRepository, IUserRepository userRepository)
         {
             _cardRepository = cardRepository;
-            _colorPalettService = colorPalettService;
-            _userService = userService;
+            _colorPalettRepository = colorPalettRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ResponseMessage<List<Card>>> GetCardsAsync()
@@ -109,12 +109,12 @@ namespace Daily.Planner.with.God.Application.Services
 
         public async Task<CardInfoDto> GetCustomCardInfoAsync(Card card)
         {
-            var primaryColor = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorId);
-            var letterColor = await _colorPalettService.GetColorPalettAsync(card.LetterColorId);
-            var titleColor = await _colorPalettService.GetColorPalettAsync(card.TitleColorId);
-            var letterDateColor = await _colorPalettService.GetColorPalettAsync(card.LetterDateColorId);
-            var primaryColorDate = await _colorPalettService.GetColorPalettAsync(card.PrimaryColorDateId);
-            var user = await _userService.GetUserAsync(card.OriginalUserId);
+            var primaryColor = await _colorPalettRepository.GetByIdAsync(card.PrimaryColorId);
+            var letterColor = await _colorPalettRepository.GetByIdAsync(card.LetterColorId);
+            var titleColor = await _colorPalettRepository.GetByIdAsync(card.TitleColorId);
+            var letterDateColor = await _colorPalettRepository.GetByIdAsync(card.LetterDateColorId);
+            var primaryColorDate = await _colorPalettRepository.GetByIdAsync(card.PrimaryColorDateId);
+            var user = await _userRepository.GetByIdAsync(card.OriginalUserId);
 
             var cardDto = new CardInfoDto()
             {

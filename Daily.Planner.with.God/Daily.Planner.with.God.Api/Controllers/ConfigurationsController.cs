@@ -6,6 +6,7 @@ using Daily.Planner.with.God.Application.Interfaces;
 using Daily.Planner.with.God.Domain.Entities;
 using Daily.Planner.with.God.Common;
 using Microsoft.AspNetCore.Authorization;
+using Daily.Planner.with.God.Application.Services;
 
 namespace Daily.Planner.with.God.Api.Controllers
 {
@@ -15,65 +16,37 @@ namespace Daily.Planner.with.God.Api.Controllers
     public class ConfigurationsController : ControllerBase
     {
         private readonly IConfigurationService _configurationService;
+        private readonly IUserService _userService;
 
-        public ConfigurationsController(IConfigurationService configurationService)
+        public ConfigurationsController(IConfigurationService configurationService, IUserService userService)
         {
             _configurationService = configurationService;
+            _userService = userService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseMessage<List<Configuration>>>> GetConfigurations()
         {
-            var response = await _configurationService.GetConfigurationsAsync();
-            if (response.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return Ok(response);
-            }
-            return BadRequest(response);
-        }
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CSCN"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseMessage<Configuration?>>> GetConfiguration(Guid id)
-        {
-            var response = await _configurationService.GetConfigurationAsync(id);
-            if (response.Success)
-            {
-                return Ok(response);
+                var response = await _configurationService.GetConfigurationsAsync();
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                return BadRequest(response);
             }
-            return NotFound(response);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ResponseMessage<Configuration>>> CreateConfiguration(Configuration configuration)
-        {
-            var response = await _configurationService.CreateConfigurationAsync(configuration);
-            if (response.Success)
+            else
             {
-                return CreatedAtAction(nameof(GetConfiguration), new { id = response.Data.Id }, response);
+                return Unauthorized();
             }
-            return BadRequest(response);
-        }
-
-        [HttpPut]
-        public async Task<ActionResult<ResponseMessage<bool>>> UpdateConfiguration(Configuration configuration)
-        {
-            var response = await _configurationService.UpdateConfigurationAsync(configuration);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> DeleteConfiguration(Guid id)
-        {
-            var response = await _configurationService.DeleteConfigurationAsync(id);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
         }
     }
 }

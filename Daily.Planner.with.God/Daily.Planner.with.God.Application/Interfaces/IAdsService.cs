@@ -10,6 +10,7 @@ namespace Daily.Planner.with.God.Application.Interfaces
     {
         Task<ResponseMessage<List<Ads>>> GetAdsAsync();
         Task<ResponseMessage<List<Ads>>> GetAdsAsync(Guid userId);
+        Task<ResponseMessage<List<Ads>>> GetAdsByUserIdAsync(Guid userId);
         Task<ResponseMessage<Ads?>> GetAdAsync(Guid id);
         Task<ResponseMessage<Ads>> CreateAdAsync(Ads ad);
         Task<ResponseMessage<bool>> UpdateAdAsync(Ads ad);

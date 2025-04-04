@@ -15,65 +15,37 @@ namespace Daily.Planner.with.God.Api.Controllers
     public class AgendasController : ControllerBase
     {
         private readonly IAgendaService _agendaService;
+        private readonly IUserService _userService;
 
-        public AgendasController(IAgendaService agendaService)
+        public AgendasController(IAgendaService agendaService, IUserService userService)
         {
             _agendaService = agendaService;
+            _userService = userService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseMessage<List<Agenda>>>> GetAgendasByGender(bool isMale)
         {
-            var response = await _agendaService.GetAgendasAsync(isMale);
-            if (response.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return Ok(response);
-            }
-            return BadRequest(response);
-        }
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CSAG"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseMessage<Agenda?>>> GetAgenda(Guid id)
-        {
-            var response = await _agendaService.GetAgendaAsync(id);
-            if (response.Success)
-            {
-                return Ok(response);
+                var response = await _agendaService.GetAgendasAsync(isMale);
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                return BadRequest(response);
             }
-            return NotFound(response);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ResponseMessage<Agenda>>> CreateAgenda(Agenda agenda)
-        {
-            var response = await _agendaService.CreateAgendaAsync(agenda);
-            if (response.Success)
+            else
             {
-                return CreatedAtAction(nameof(GetAgenda), new { id = response.Data.Id }, response);
+                return Unauthorized();
             }
-            return BadRequest(response);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> UpdateAgenda(Agenda agenda)
-        {
-            var response = await _agendaService.UpdateAgendaAsync(agenda);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ResponseMessage<bool>>> DeleteAgenda(Guid id)
-        {
-            var response = await _agendaService.DeleteAgendaAsync(id);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
         }
     }
 }

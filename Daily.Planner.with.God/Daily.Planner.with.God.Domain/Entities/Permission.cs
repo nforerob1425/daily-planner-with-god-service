@@ -14,6 +14,7 @@ namespace Daily.Planner.with.God.Domain.Entities
         public Guid Id { get; set; }
         public string Description { get; set; }
         public string SystemName { get; set; }
+        public int Priority { get; set; }
         [JsonIgnore]
         public ICollection<TemporalPermission> TemporalPermissions { get; set; }
     }

@@ -25,67 +25,122 @@ namespace Daily.Planner.with.God.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ResponseMessage<List<Note>>>> GetAllNotesByUserId([FromQuery] Guid AgendaId)
         {
-            try
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Request.Headers.TryGetValue("UserId", out var currentUserId);
-                Guid userId = Guid.Parse(currentUserId.ToString());
-                var notesData = await _noteService.GetNotesAsync(userId, AgendaId);
-                return Ok(notesData);
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CSNT"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                try
+                {
+                    Guid userId = Guid.Parse(currentUserId.ToString());
+                    var notesData = await _noteService.GetNotesAsync(userId, AgendaId);
+                    return Ok(notesData);
+                }
+                catch (Exception)
+                {
+                    return Unauthorized();
+                }
             }
-            catch (Exception)
+            else
             {
                 return Unauthorized();
             }
             
         }
 
-        
+
         [HttpPut]
-        public async Task<ResponseMessage<bool>> UpdateNote(NoteUpdateDto noteToUpdate)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateNote(NoteUpdateDto noteToUpdate)
         {
-            var note = new Note();
-            var agendaData = await _agendaService.GetAgendaAsync(noteToUpdate.AgendaId);
-            var userData = await _userService.GetUserAsync(noteToUpdate.UserId);
-
-            if (userData.Success && agendaData.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                note.Agenda = agendaData.Data;
-                note.User = userData.Data;
-                note.AgendaId = noteToUpdate.AgendaId;
-                note.UserId = noteToUpdate.UserId;
-                note.Content = noteToUpdate.Content;
-                note.Id = noteToUpdate.Id;
-            }
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CUNT", "CSAG", "CSUS"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            var updatedData = await _noteService.UpdateNoteAsync(note);
-            return updatedData;
+                var note = new Note();
+                var agendaData = await _agendaService.GetAgendaAsync(noteToUpdate.AgendaId);
+                var userData = await _userService.GetUserAsync(noteToUpdate.UserId);
+
+                if (userData.Success && agendaData.Success)
+                {
+                    note.Agenda = agendaData.Data;
+                    note.User = userData.Data;
+                    note.AgendaId = noteToUpdate.AgendaId;
+                    note.UserId = noteToUpdate.UserId;
+                    note.Content = noteToUpdate.Content;
+                    note.Id = noteToUpdate.Id;
+                }
+
+                var updatedData = await _noteService.UpdateNoteAsync(note);
+                return updatedData;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPost]
-        public async Task<ResponseMessage<Note>> CreateNote(NoteCreateDto noteToCreate)
+        public async Task<ActionResult<ResponseMessage<Note>>> CreateNote(NoteCreateDto noteToCreate)
         {
-            var note = new Note();
-            var agendaData = await _agendaService.GetAgendaAsync(noteToCreate.AgendaId);
-            var userData = await _userService.GetUserAsync(noteToCreate.UserId);
-
-            if (userData.Success && agendaData.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                note.Agenda = agendaData.Data;
-                note.User = userData.Data;
-                note.AgendaId = noteToCreate.AgendaId;
-                note.UserId = noteToCreate.UserId;
-                note.Content = noteToCreate.Content;
-            }
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CCNT", "CSAG", "CSUS"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            var createdData = await _noteService.CreateNoteAsync(note);
-            return createdData;
+                var note = new Note();
+                var agendaData = await _agendaService.GetAgendaAsync(noteToCreate.AgendaId);
+                var userData = await _userService.GetUserAsync(noteToCreate.UserId);
+
+                if (userData.Success && agendaData.Success)
+                {
+                    note.Agenda = agendaData.Data;
+                    note.User = userData.Data;
+                    note.AgendaId = noteToCreate.AgendaId;
+                    note.UserId = noteToCreate.UserId;
+                    note.Content = noteToCreate.Content;
+                }
+
+                var createdData = await _noteService.CreateNoteAsync(note);
+                return createdData;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpDelete]
-        public async Task<ResponseMessage<bool>> DeleteNote(Guid noteId)
+        public async Task<ActionResult<ResponseMessage<bool>>> DeleteNote(Guid noteId)
         {
-            var deletedData = await _noteService.DeleteNoteAsync(noteId);
-            return deletedData;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CDNT"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var deletedData = await _noteService.DeleteNoteAsync(noteId);
+                return deletedData;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

@@ -28,127 +28,186 @@ namespace Daily.Planner.with.God.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ResponseMessage<List<CardInfoDto>>>> GetCards([FromQuery] Guid userId)
         {
-            var cards = await _cardService.GetCardsAsync(userId);            
-            List<CardInfoDto> cardsDto = new List<CardInfoDto>();
-
-            foreach (var card in cards.Data)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                var cardDto = await _cardService.GetCustomCardInfoAsync(card);
-                cardsDto.Add(cardDto);
-            }   
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CSCD", "CSCO", "CSUS"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            var response = new ResponseMessage<List<CardInfoDto>>
-            {
-                Data = cardsDto,
-                Message = cards.Message,
-                Success = cards.Success
-            };
+                var cards = await _cardService.GetCardsAsync(userId);
+                List<CardInfoDto> cardsDto = new List<CardInfoDto>();
 
-            return response;
-        }
+                foreach (var card in cards.Data)
+                {
+                    var cardDto = await _cardService.GetCustomCardInfoAsync(card);
+                    cardsDto.Add(cardDto);
+                }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseMessage<Card>>> GetCard(Guid id)
-        {
-            var card = await _cardService.GetCardAsync(id);
-            if (card == null)
-            {
-                return NotFound();
+                var response = new ResponseMessage<List<CardInfoDto>>
+                {
+                    Data = cardsDto,
+                    Message = cards.Message,
+                    Success = cards.Success
+                };
+
+                return response;
             }
-            return card;
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPatch]
         public async Task<ActionResult<ResponseMessage<bool>>> SetFavoriteCard([FromQuery] Guid cardId)
         {
-            var response = new ResponseMessage<bool>()
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Data = false,
-                Message = "Card not found",
-                Success = false
-            };
-
-            var cardData = await _cardService.GetCardAsync(cardId);
-            if (cardData.Success)
-            {
-                response.Message = cardData.Message;
-                cardData.Data.Favorite = !cardData.Data.Favorite;
-                var cardUpdatedData = await _cardService.SetFavoriteCard(cardData.Data);
-                if (cardUpdatedData.Success)
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CUCD", "CSCD"]);
+                if (!validAccess)
                 {
-                    response.Success = cardUpdatedData.Success;
-                    response.Data = cardUpdatedData.Data;
-                    response.Message = cardUpdatedData.Message;
+                    return Unauthorized();
                 }
+
+                var response = new ResponseMessage<bool>()
+                {
+                    Data = false,
+                    Message = "Card not found",
+                    Success = false
+                };
+
+                var cardData = await _cardService.GetCardAsync(cardId);
+                if (cardData.Success)
+                {
+                    response.Message = cardData.Message;
+                    cardData.Data.Favorite = !cardData.Data.Favorite;
+                    var cardUpdatedData = await _cardService.SetFavoriteCard(cardData.Data);
+                    if (cardUpdatedData.Success)
+                    {
+                        response.Success = cardUpdatedData.Success;
+                        response.Data = cardUpdatedData.Data;
+                        response.Message = cardUpdatedData.Message;
+                    }
+                }
+                return response;
             }
-            return response;
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<ResponseMessage<CardInfoDto>>> CreateCard(CardCreateDto cardtoCreate)
         {
-            var card = new Card
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                CreateDate = cardtoCreate.CreateDate,
-                Title = cardtoCreate.Title,
-                Content = cardtoCreate.Content,
-                Favorite = cardtoCreate.Favorite,
-                PrimaryColorId = cardtoCreate.PrimaryColorId,
-                LetterColorId = cardtoCreate.LetterColorId,
-                TitleColorId = cardtoCreate.TitleColorId,
-                LetterDateColorId = cardtoCreate.LetterDateColorId,
-                PrimaryColorDateId = cardtoCreate.PrimaryColorDateId,
-                Versicle = cardtoCreate.Versicle,
-                UserId = cardtoCreate.UserId,
-                AgendaId = cardtoCreate.AgendaId,
-                OriginalUserId = cardtoCreate.UserId
-            };
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CCCD", "CSCO", "CSUS"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            var createdCard = await _cardService.CreateCardAsync(card);
+                var card = new Card
+                {
+                    CreateDate = cardtoCreate.CreateDate,
+                    Title = cardtoCreate.Title,
+                    Content = cardtoCreate.Content,
+                    Favorite = cardtoCreate.Favorite,
+                    PrimaryColorId = cardtoCreate.PrimaryColorId,
+                    LetterColorId = cardtoCreate.LetterColorId,
+                    TitleColorId = cardtoCreate.TitleColorId,
+                    LetterDateColorId = cardtoCreate.LetterDateColorId,
+                    PrimaryColorDateId = cardtoCreate.PrimaryColorDateId,
+                    Versicle = cardtoCreate.Versicle,
+                    UserId = cardtoCreate.UserId,
+                    AgendaId = cardtoCreate.AgendaId,
+                    OriginalUserId = cardtoCreate.UserId
+                };
 
-            var cardDto = new CardInfoDto();
+                var createdCard = await _cardService.CreateCardAsync(card);
 
-            if (createdCard.Success && createdCard.Data != null)
-            {
-                cardDto = await _cardService.GetCustomCardInfoAsync(card);
+                var cardDto = new CardInfoDto();
+
+                if (createdCard.Success && createdCard.Data != null)
+                {
+                    cardDto = await _cardService.GetCustomCardInfoAsync(card);
+                }
+
+                return new ActionResult<ResponseMessage<CardInfoDto>>(new ResponseMessage<CardInfoDto>
+                {
+                    Data = cardDto,
+                    Message = createdCard.Message,
+                    Success = createdCard.Success
+                });
             }
-
-            return new ActionResult<ResponseMessage<CardInfoDto>>(new ResponseMessage<CardInfoDto>
+            else
             {
-                Data = cardDto,
-                Message = createdCard.Message,
-                Success = createdCard.Success
-            });
+                return Unauthorized();
+            }
         }
 
         [HttpPut]
-        public async Task<ResponseMessage<bool>> UpdateCard(CardUpdateDto cardToUpdate)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateCard(CardUpdateDto cardToUpdate)
         {
-            var cardResponse = await _cardService.GetCardAsync(cardToUpdate.Id);
-            if (cardResponse.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                var card = cardResponse.Data;
-                var userData = await _userService.GetUserAsync(card.UserId);
-                _mapper.Map(cardToUpdate, card);
-                card.OriginalUser = userData.Success ? userData.Data : null;
-                card.OriginalUserId = userData.Success ? userData.Data.Id : Guid.Empty;
-                var cardUpdated = await _cardService.UpdateCardAsync(card);
-                if (cardUpdated.Success)
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CUCD", "CSCD", "CSUS"]);
+                if (!validAccess)
                 {
-                    return cardUpdated;
+                    return Unauthorized();
                 }
+
+                var cardResponse = await _cardService.GetCardAsync(cardToUpdate.Id);
+                if (cardResponse.Success)
+                {
+                    var card = cardResponse.Data;
+                    var userData = await _userService.GetUserAsync(card.UserId);
+                    _mapper.Map(cardToUpdate, card);
+                    card.OriginalUser = userData.Success ? userData.Data : null;
+                    card.OriginalUserId = userData.Success ? userData.Data.Id : Guid.Empty;
+                    var cardUpdated = await _cardService.UpdateCardAsync(card);
+                    if (cardUpdated.Success)
+                    {
+                        return cardUpdated;
+                    }
+                }
+                return new ResponseMessage<bool>
+                {
+                    Success = false,
+                    Message = "Card not found"
+                };
             }
-            return new ResponseMessage<bool>
+            else
             {
-                Success = false,
-                Message = "Card not found"
-            };
+                return Unauthorized();
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ResponseMessage<bool>> DeleteCard(Guid id)
+        public async Task<ActionResult<ResponseMessage<bool>>> DeleteCard(Guid id)
         {
-            return await _cardService.DeleteCardAsync(id);
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userIdToValid = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CDCD"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                return await _cardService.DeleteCardAsync(id);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

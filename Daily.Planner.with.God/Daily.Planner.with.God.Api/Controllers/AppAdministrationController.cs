@@ -1,5 +1,6 @@
 ﻿using Daily.Planner.with.God.Application.Dtos;
 using Daily.Planner.with.God.Application.Interfaces;
+using Daily.Planner.with.God.Application.Services;
 using Daily.Planner.with.God.Common;
 using Daily.Planner.with.God.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -16,155 +17,310 @@ namespace Daily.Planner.with.God.Api.Controllers
         private readonly IColorPalettService _colorPalettService;
         private readonly ITypeService _typeService;
         private readonly IApplicationConfigServices _applicationConfigServices;
+        private readonly IUserService _userService; 
 
-        public AppAdministrationController(IAgendaService agendaService, IColorPalettService colorPalettService, ITypeService typeService, IApplicationConfigServices applicationConfigServices)
+        public AppAdministrationController(IAgendaService agendaService, IColorPalettService colorPalettService, ITypeService typeService, IApplicationConfigServices applicationConfigServices, IUserService userService)
         {
             _agendaService = agendaService;
             _colorPalettService = colorPalettService;
             _typeService = typeService;
             _applicationConfigServices = applicationConfigServices;
+            _userService = userService;
         }
 
         [HttpGet]
         [Route("appConfigs")]
-        public async Task<ResponseMessage<List<ApplicationConfig>>> GetAllAppConfigs()
+        public async Task<ActionResult<ResponseMessage<List<ApplicationConfig>>>> GetAllAppConfigs()
         {
-            var appConfigs = await _applicationConfigServices.GetApplicationConfigsAsync();
-            return appConfigs;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CSAP"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var appConfigs = await _applicationConfigServices.GetApplicationConfigsAsync();
+                return appConfigs;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpGet]
         [Route("agendas")]
-        public async Task<ResponseMessage<List<Agenda>>> GetAllAgendas()
+        public async Task<ActionResult<ResponseMessage<List<Agenda>>>> GetAllAgendas()
         {
-            var agendas = await _agendaService.GetAgendasAsync();
-            return agendas;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CSAG"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var agendas = await _agendaService.GetAgendasAsync();
+                return agendas;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpGet]
         [Route("colors")]
-        public async Task<ResponseMessage<List<ColorPalett>>> GetAllColors()
+        public async Task<ActionResult<ResponseMessage<List<ColorPalett>>>> GetAllColors()
         {
-            var colorPaletts = await _colorPalettService.GetColorPalettsAsync();
-            return colorPaletts;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CSCO"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var colorPaletts = await _colorPalettService.GetColorPalettsAsync();
+                return colorPaletts;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpGet]
         [Route("types")]
-        public async Task<ResponseMessage<List<Domain.Entities.Type>>> GetAllColorTypes()
+        public async Task<ActionResult<ResponseMessage<List<Domain.Entities.Type>>>> GetAllColorTypes()
         {
-            var colorTypes = await _typeService.GetTypesAsync();
-            colorTypes.Data = colorTypes.Data.OrderBy(c => c.Name).ToList();
-            return colorTypes;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CSTC"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var colorTypes = await _typeService.GetTypesAsync();
+                colorTypes.Data = colorTypes.Data.OrderBy(c => c.Name).ToList();
+                return colorTypes;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPut]
         [Route("agendas")]
-        public async Task<ResponseMessage<Agenda>> CreateNewAgenda(AgendaCreateDto agendaToCreate)
+        public async Task<ActionResult<ResponseMessage<Agenda>>> CreateNewAgenda(AgendaCreateDto agendaToCreate)
         {
-            
-            var agenda = new Agenda()
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Year = agendaToCreate.Year,
-                Title = agendaToCreate.Title,
-                Content = agendaToCreate.Content,
-                ImageBackgroundSrc = agendaToCreate.ImageBackgroundSrc,
-                IsReported = agendaToCreate.IsReported,
-                IsMale = agendaToCreate.IsMale,
-            };
-
-            if (agendaToCreate.OriginalAgendaId != null)
-            {
-                var originalAgenda = await _agendaService.GetAgendaAsync((Guid)agendaToCreate.OriginalAgendaId);
-                if (originalAgenda.Success)
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CCAG", "CSAG"]);
+                if (!validAccess)
                 {
-                    agenda.OriginalAgenda = originalAgenda.Data;
-                    agenda.OriginalAgendaId = agendaToCreate?.OriginalAgendaId;
+                    return Unauthorized();
                 }
+
+                var agenda = new Agenda()
+                {
+                    Year = agendaToCreate.Year,
+                    Title = agendaToCreate.Title,
+                    Content = agendaToCreate.Content,
+                    ImageBackgroundSrc = agendaToCreate.ImageBackgroundSrc,
+                    IsReported = agendaToCreate.IsReported,
+                    IsMale = agendaToCreate.IsMale,
+                };
+
+                if (agendaToCreate.OriginalAgendaId != null)
+                {
+                    var originalAgenda = await _agendaService.GetAgendaAsync((Guid)agendaToCreate.OriginalAgendaId);
+                    if (originalAgenda.Success)
+                    {
+                        agenda.OriginalAgenda = originalAgenda.Data;
+                        agenda.OriginalAgendaId = agendaToCreate?.OriginalAgendaId;
+                    }
+                }
+                var agendaCreated = await _agendaService.CreateAgendaAsync(agenda);
+                return agendaCreated;
             }
-            var agendaCreated = await _agendaService.CreateAgendaAsync(agenda);
-            return agendaCreated;
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPut]
         [Route("colors")]
-        public async Task<ResponseMessage<ColorPalett>> CreateNewColor(ColorCreateDto colorPaletteToCreate)
+        public async Task<ActionResult<ResponseMessage<ColorPalett>>> CreateNewColor(ColorCreateDto colorPaletteToCreate)
         {
-            var colorPalette = new ColorPalett()
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Color = colorPaletteToCreate.Color,
-                TypeId = colorPaletteToCreate.TypeId
-            };
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CCCO"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            var colorCreated = await _colorPalettService.CreateColorPalettAsync(colorPalette);
-            return colorCreated;
+                var colorPalette = new ColorPalett()
+                {
+                    Color = colorPaletteToCreate.Color,
+                    TypeId = colorPaletteToCreate.TypeId
+                };
+
+                var colorCreated = await _colorPalettService.CreateColorPalettAsync(colorPalette);
+                return colorCreated;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPost]
         [Route("agendas")]
-        public async Task<ResponseMessage<bool>> UpdateAgenda(AgendaUpdateDto agendaToUpdate)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateAgenda(AgendaUpdateDto agendaToUpdate)
         {
-            var agenda = new Agenda()
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Id = agendaToUpdate.Id,
-                Year = agendaToUpdate.Year,
-                Title = agendaToUpdate.Title,
-                Content = agendaToUpdate.Content,
-                ImageBackgroundSrc = agendaToUpdate.ImageBackgroundSrc,
-                IsReported = agendaToUpdate.IsReported,
-                IsMale = agendaToUpdate.IsMale,
-            };
-
-            if (agendaToUpdate.OriginalAgendaId != null)
-            {
-                var originalAgenda = await _agendaService.GetAgendaAsync((Guid)agendaToUpdate.OriginalAgendaId);
-                if (originalAgenda.Success)
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CUAG", "CSAG"]);
+                if (!validAccess)
                 {
-                    agenda.OriginalAgenda = originalAgenda.Data;
-                    agenda.OriginalAgendaId = agendaToUpdate?.OriginalAgendaId;
+                    return Unauthorized();
                 }
+
+                var agenda = new Agenda()
+                {
+                    Id = agendaToUpdate.Id,
+                    Year = agendaToUpdate.Year,
+                    Title = agendaToUpdate.Title,
+                    Content = agendaToUpdate.Content,
+                    ImageBackgroundSrc = agendaToUpdate.ImageBackgroundSrc,
+                    IsReported = agendaToUpdate.IsReported,
+                    IsMale = agendaToUpdate.IsMale,
+                };
+
+                if (agendaToUpdate.OriginalAgendaId != null)
+                {
+                    var originalAgenda = await _agendaService.GetAgendaAsync((Guid)agendaToUpdate.OriginalAgendaId);
+                    if (originalAgenda.Success)
+                    {
+                        agenda.OriginalAgenda = originalAgenda.Data;
+                        agenda.OriginalAgendaId = agendaToUpdate?.OriginalAgendaId;
+                    }
+                }
+                var updated = await _agendaService.UpdateAgendaAsync(agenda);
+                return updated;
             }
-            var updated = await _agendaService.UpdateAgendaAsync(agenda);
-            return updated;
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPost]
         [Route("colors")]
-        public async Task<ResponseMessage<bool>> UpdateColor(ColorUpdateDto colorPaletteToUpdate)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateColor(ColorUpdateDto colorPaletteToUpdate)
         {
-            var colorPalette = new ColorPalett()
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                Id = colorPaletteToUpdate.Id,
-                Color = colorPaletteToUpdate.Color,
-                TypeId = colorPaletteToUpdate.TypeId
-            };
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CUCO"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
 
-            var updated = await _colorPalettService.UpdateColorPalettAsync(colorPalette);
-            return updated;
+                var colorPalette = new ColorPalett()
+                {
+                    Id = colorPaletteToUpdate.Id,
+                    Color = colorPaletteToUpdate.Color,
+                    TypeId = colorPaletteToUpdate.TypeId
+                };
+
+                var updated = await _colorPalettService.UpdateColorPalettAsync(colorPalette);
+                return updated;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPost]
         [Route("appConfigs")]
-        public async Task<ResponseMessage<bool>> UpdateAppConfigs(ApplicationConfig appConfig)
+        public async Task<ActionResult<ResponseMessage<bool>>> UpdateAppConfigs(ApplicationConfig appConfig)
         {
-            var updated = await _applicationConfigServices.UpdateApplicationConfigAsync(appConfig);
-            return updated;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CUAP"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var updated = await _applicationConfigServices.UpdateApplicationConfigAsync(appConfig);
+                return updated;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpDelete]
         [Route("agendas")]
-        public async Task<ResponseMessage<bool>> DeleteAgenda([FromQuery] Guid agendaId)
+        public async Task<ActionResult<ResponseMessage<bool>>> DeleteAgenda([FromQuery] Guid agendaId)
         {
-            var deleted = await _agendaService.DeleteAgendaAsync(agendaId);
-            return deleted;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CDAG"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var deleted = await _agendaService.DeleteAgendaAsync(agendaId);
+                return deleted;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpDelete]
         [Route("colors")]
-        public async Task<ResponseMessage<bool>> DeleteColor([FromQuery] Guid colorPaletteId)
+        public async Task<ActionResult<ResponseMessage<bool>>> DeleteColor([FromQuery] Guid colorPaletteId)
         {
-            var deleted = await _colorPalettService.DeleteColorPalettAsync(colorPaletteId);
-            return deleted;
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
+            {
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CDCO"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var deleted = await _colorPalettService.DeleteColorPalettAsync(colorPaletteId);
+                return deleted;
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

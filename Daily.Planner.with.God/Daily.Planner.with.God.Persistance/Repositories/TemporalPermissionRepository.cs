@@ -113,5 +113,34 @@ namespace Daily.Planner.with.God.Persistance.Repositories
 
             return response;
         }
+
+        public async Task<ResponseMessage<List<TemporalPermission>>> GetByRoleIdAsync(Guid roleId)
+        {
+            var response = new ResponseMessage<List<TemporalPermission>>();
+            try
+            {
+                var entities = await _context.TemporalPermissions.Where(r => r.RoleId == roleId).ToListAsync();
+                response = new ResponseMessage<List<TemporalPermission>>
+                {
+                    Data = entities,
+                    Message = $"{typeof(TemporalPermission).Name} found",
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Error getting {typeof(TemporalPermission).Name}s, Error: {ex.Message}";
+                response.Success = false;
+
+                Exception inner = ex.InnerException;
+                while (inner != null)
+                {
+                    response.Message += $" | InnerError: {inner.Message}";
+                    inner = inner.InnerException;
+                }
+            }
+
+            return response;
+        }
     }
 }

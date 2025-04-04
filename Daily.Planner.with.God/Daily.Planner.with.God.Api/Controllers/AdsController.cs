@@ -32,6 +32,12 @@ namespace Daily.Planner.with.God.Api.Controllers
             if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
                 Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CSNW"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
                 var userData = await _userService.GetUserAsync(userId);
 
                 if (userData.Success)
@@ -43,11 +49,11 @@ namespace Daily.Planner.with.God.Api.Controllers
                         ResponseMessage<User?> userAdData = new ResponseMessage<User?>();
                         foreach (var ads in adsData.Data)
                         {
-                            if(ads.UserCreatedId != null)
+                            if (ads.UserCreatedId != null)
                             {
                                 userAdData = await _userService.GetUserAsync((Guid)ads.UserCreatedId);
                             }
-                            
+
                             var ad = new AdsInfoDto()
                             {
                                 Id = ads.Id,
@@ -63,34 +69,47 @@ namespace Daily.Planner.with.God.Api.Controllers
                             adsResponse.Add(ad);
                         }
 
-                        var response = new ResponseMessage<List<AdsInfoDto>>() 
-                        { 
+                        var response = new ResponseMessage<List<AdsInfoDto>>()
+                        {
                             Data = adsResponse,
                             Message = adsData.Message,
                             Success = adsData.Success,
                         };
-                        
+
                         return Ok(response);
                     }
-                    
+
                 }
-                
+
             }
-            
+
             return Unauthorized();
-            
-            
+
+
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponseMessage<Ads?>>> GetAd(Guid id)
         {
-            var response = await _adsService.GetAdAsync(id);
-            if (response.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return Ok(response);
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CSNW"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+                var response = await _adsService.GetAdAsync(id);
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                return NotFound(response);
             }
-            return NotFound(response);
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpPost]
@@ -99,9 +118,15 @@ namespace Daily.Planner.with.God.Api.Controllers
             if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
                 Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CCNW", "CSUS"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
                 var userData = await _userService.GetUserAsync(userId);
 
-                if(userData.Success)
+                if (userData.Success)
                 {
                     var roleData = await _roleService.GetRoleAsync(userData.Data.RoleId);
 
@@ -112,9 +137,11 @@ namespace Daily.Planner.with.God.Api.Controllers
                     else
                     {
                         ad.IsGlobal = false;
-                        ad.UserCreated = userData.Data;
-                        ad.UserCreatedId = userData.Data.Id;
                     }
+
+
+                    ad.UserCreated = userData.Data;
+                    ad.UserCreatedId = userData.Data.Id;
 
                     var response = await _adsService.CreateAdAsync(ad);
                     if (response.Success)
@@ -122,31 +149,59 @@ namespace Daily.Planner.with.God.Api.Controllers
                         return CreatedAtAction(nameof(GetAd), new { id = response.Data.Id }, response);
                     }
                 }
-            } 
+            }
 
-            return BadRequest();            
+            return BadRequest();
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseMessage<bool>>> UpdateAd(Ads ad)
         {
-            var response = await _adsService.UpdateAdAsync(ad);
-            if (response.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return Ok(response);
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CUNW"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var response = await _adsService.UpdateAdAsync(ad);
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                return BadRequest(response);
             }
-            return BadRequest(response);
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseMessage<bool>>> DeleteAd(Guid id)
         {
-            var response = await _adsService.DeleteAdAsync(id);
-            if (response.Success)
+            if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
-                return Ok(response);
+                Guid userId = Guid.Parse(currentUserId.ToString());
+                var validAccess = await _userService.ValidAccessPermissionAsync(userId, ["CDNW"]);
+                if (!validAccess)
+                {
+                    return Unauthorized();
+                }
+
+                var response = await _adsService.DeleteAdAsync(id);
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                return BadRequest(response);
             }
-            return BadRequest(response);
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }
