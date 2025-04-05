@@ -40,42 +40,5 @@ namespace Daily.Planner.with.God.Application.Services
                 throw;
             }
         }
-
-        public async Task<ResponseMessage<Permission>> CreatePermissionAsync(Permission permission)
-        {
-            try
-            {
-                permission.Id = Guid.NewGuid();
-                return await _permissionRepository.CreateAsync(permission);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> UpdatePermissionAsync(Permission permission)
-        {
-            try
-            {
-                return await _permissionRepository.UpdateAsync(permission);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> DeletePermissionAsync(Guid id)
-        {
-            try
-            {
-                return await _permissionRepository.DeleteAsync(id);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
     }
 }

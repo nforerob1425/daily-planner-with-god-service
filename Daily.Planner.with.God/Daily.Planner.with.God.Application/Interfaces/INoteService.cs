@@ -14,7 +14,6 @@ namespace Daily.Planner.with.God.Application.Interfaces
         Task<ResponseMessage<List<Note>>> GetNotesAsync();
         Task<ResponseMessage<List<Note>>> GetNotesAsync(Guid userId, Guid agendaId);
         Task<ResponseMessage<List<Note>>> GetNotesAsync(Guid userId);
-        Task<ResponseMessage<Note?>> GetNoteAsync(Guid id);
         Task<ResponseMessage<Note>> CreateNoteAsync(Note note);
         Task<ResponseMessage<bool>> UpdateNoteAsync(Note note);
         Task<ResponseMessage<bool>> DeleteNoteAsync(Guid id);

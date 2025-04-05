@@ -42,45 +42,5 @@ namespace Daily.Planner.with.God.Application.Services
                 throw;
             }
         }
-
-        public async Task<ResponseMessage<Configuration>> CreateConfigurationAsync(Configuration configuration)
-        {
-            try
-            {
-                configuration.Id = Guid.NewGuid();
-                return await _configurationRepository.CreateAsync(configuration);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> UpdateConfigurationAsync(Configuration configuration)
-        {
-            try
-            {
-                return await _configurationRepository.UpdateAsync(configuration);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> DeleteConfigurationAsync(Guid id)
-        {
-            try
-            {
-                return await _configurationRepository.DeleteAsync(id);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
     }
 }

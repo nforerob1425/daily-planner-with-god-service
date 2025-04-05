@@ -7,8 +7,5 @@ namespace Daily.Planner.with.God.Application.Interfaces
     {
         Task<ResponseMessage<List<Type>>> GetTypesAsync();
         Task<ResponseMessage<Type?>> GetTypeAsync(Guid id);
-        Task<ResponseMessage<Type>> CreateTypeAsync(Type type);
-        Task<ResponseMessage<bool>> UpdateTypeAsync(Type type);
-        Task<ResponseMessage<bool>> DeleteTypeAsync(Guid id);
     }
 }

@@ -19,48 +19,6 @@ namespace Daily.Planner.with.God.Application.Services
             _applicationConfigRepository = applicationConfigRepository;
         }
 
-        public async Task<ResponseMessage<ApplicationConfig>> CreateApplicationConfigAsync(ApplicationConfig appConfig)
-        {
-            try
-            {
-                var created = await _applicationConfigRepository.CreateAsync(appConfig);
-                return created;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> DeleteApplicationConfigAsync(Guid id)
-        {
-            try
-            {
-                var deleted = await _applicationConfigRepository.DeleteAsync(id);
-                return deleted;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<ApplicationConfig?>> GetApplicationConfigAsync(Guid id)
-        {
-            try
-            {
-                var appConfig = await _applicationConfigRepository.GetByIdAsync(id);
-                return appConfig;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }            
-        }
-
         public async Task<ResponseMessage<List<ApplicationConfig>>> GetApplicationConfigsAsync()
         {
             try

@@ -30,19 +30,6 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
-        public async Task<ResponseMessage<ColorPalett?>> GetColorPalettAsync(Guid id)
-        {
-            try
-            {
-                return await _colorPalettRepository.GetByIdAsync(id);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
         public async Task<ResponseMessage<ColorPalett>> CreateColorPalettAsync(ColorPalett colorPalett)
         {
             try

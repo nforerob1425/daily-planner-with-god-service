@@ -18,34 +18,6 @@ namespace Daily.Planner.with.God.Application.Services
             _petitionTypeRepository = petitionTypeRepository;
         }
 
-        public async Task<ResponseMessage<PetitionType>> CreatePetitionTypeAsync(PetitionType petitionType)
-        {
-            try
-            {
-                var petitionTypeCreated = await _petitionTypeRepository.CreateAsync(petitionType);
-                return petitionTypeCreated;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> DeletePetitionTypeAsync(Guid id)
-        {
-            try
-            {
-                var petition = await _petitionTypeRepository.DeleteAsync(id);
-                return petition;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
         public async Task<ResponseMessage<PetitionType?>> GetPetitionTypeAsync(Guid id)
         {
             try
@@ -66,20 +38,6 @@ namespace Daily.Planner.with.God.Application.Services
             {
                 var allPetitions = await _petitionTypeRepository.GetAllAsync();
                 return allPetitions;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> UpdatePetitionTypeAsync(PetitionType petitionType)
-        {
-            try
-            {
-                var petitionUpdated = await _petitionTypeRepository.UpdateAsync(petitionType);
-                return petitionUpdated;
             }
             catch (Exception)
             {

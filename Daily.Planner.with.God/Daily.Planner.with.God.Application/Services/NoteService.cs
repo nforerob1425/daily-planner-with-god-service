@@ -42,20 +42,6 @@ namespace Daily.Planner.with.God.Application.Services
             }
         }
 
-        public async Task<ResponseMessage<Note?>> GetNoteAsync(Guid id)
-        {
-            try
-            {
-                var note = await _noteRepository.GetByIdAsync(id);
-                return note;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
         public async Task<ResponseMessage<List<Note>>> GetNotesAsync()
         {
             try

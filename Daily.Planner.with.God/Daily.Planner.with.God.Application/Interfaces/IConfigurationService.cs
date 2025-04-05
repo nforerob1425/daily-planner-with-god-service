@@ -10,8 +10,5 @@ namespace Daily.Planner.with.God.Application.Interfaces
     {
         Task<ResponseMessage<List<Configuration>>> GetConfigurationsAsync();
         Task<ResponseMessage<Configuration?>> GetConfigurationAsync(Guid id);
-        Task<ResponseMessage<Configuration>> CreateConfigurationAsync(Configuration configuration);
-        Task<ResponseMessage<bool>> UpdateConfigurationAsync(Configuration configuration);
-        Task<ResponseMessage<bool>> DeleteConfigurationAsync(Guid id);
     }
 }

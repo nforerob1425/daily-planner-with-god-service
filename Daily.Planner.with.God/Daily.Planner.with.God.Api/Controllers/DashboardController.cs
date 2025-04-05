@@ -19,8 +19,9 @@ namespace Daily.Planner.with.God.Api.Controllers
         private readonly ITypeService _typeService;
         private readonly IRolService _roleService;
         private readonly IAdsService _adsService;
+        private readonly INoteService _noteService;
 
-        public DashboardController(IUserService userService, ICardService cardService, IPetitionService petitionService, IPetitionTypesService petitionTypesService, IAgendaService agendaService, IColorPalettService colorPalettService, ITypeService typeService, IRolService roleService, IAdsService adsService)
+        public DashboardController(IUserService userService, ICardService cardService, IPetitionService petitionService, IPetitionTypesService petitionTypesService, IAgendaService agendaService, IColorPalettService colorPalettService, ITypeService typeService, IRolService roleService, IAdsService adsService, INoteService noteService)
         {
             _userService = userService;
             _cardService = cardService;
@@ -31,6 +32,7 @@ namespace Daily.Planner.with.God.Api.Controllers
             _typeService = typeService;
             _roleService = roleService;
             _adsService = adsService;
+            _noteService = noteService;
         }
 
         [HttpGet]
@@ -40,7 +42,7 @@ namespace Daily.Planner.with.God.Api.Controllers
             if (Request.Headers.TryGetValue("UserId", out var currentUserId))
             {
                 Guid userIdToValid = Guid.Parse(currentUserId.ToString());
-                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CSCO", "CSUS", "CSPT", "CSAG", "CSTC", "CSNW", "CSCD"]);
+                var validAccess = await _userService.ValidAccessPermissionAsync(userIdToValid, ["CSCO", "CSUS", "CSPT", "CSAG", "CSTC", "CSNW", "CSCD", "CSNT"]);
                 if (!validAccess)
                 {
                     return Unauthorized();
@@ -56,6 +58,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 var typesData = await _typeService.GetTypesAsync();
                 var rolesData = await _roleService.GetRolesAsync();
                 var adsData = await _adsService.GetAdsAsync();
+                var notesData = await _noteService.GetNotesAsync();
 
                 if (usersData.Success &&
                     cardsData.Success &&
@@ -65,7 +68,8 @@ namespace Daily.Planner.with.God.Api.Controllers
                     colorsData.Success &&
                     typesData.Success &&
                     rolesData.Success &&
-                    adsData.Success)
+                    adsData.Success &&
+                    notesData.Success)
                 {
                     response.Success = true;
                     response.Message = "All data extracted";
@@ -148,6 +152,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     };
 
                     response.Data.TotalAds = adsData.Data.Count;
+                    response.Data.TotalNotes = notesData.Data.Count;
                 }
 
                 return Ok(response);

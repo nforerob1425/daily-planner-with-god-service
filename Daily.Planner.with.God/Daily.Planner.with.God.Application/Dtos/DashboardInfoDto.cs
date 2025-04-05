@@ -15,5 +15,6 @@ namespace Daily.Planner.with.God.Application.Dtos
         public TotalColorsDto Colors { get; set; }
         public TotalRolesDto Roles { get; set; }
         public int TotalAds { get; set; }
+        public int TotalNotes { get; set; }
     }
 }

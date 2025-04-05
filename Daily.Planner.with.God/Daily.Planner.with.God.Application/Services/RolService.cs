@@ -40,42 +40,5 @@ namespace Daily.Planner.with.God.Application.Services
                 throw;
             }
         }
-
-        public async Task<ResponseMessage<Role>> CreateRoleAsync(Role role)
-        {
-            try
-            {
-                role.Id = Guid.NewGuid();
-                return await _rolRepository.CreateAsync(role);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> UpdateRoleAsync(Role role)
-        {
-            try
-            {
-                return await _rolRepository.UpdateAsync(role);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> DeleteRoleAsync(Guid id)
-        {
-            try
-            {
-                return await _rolRepository.DeleteAsync(id);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
     }
 }

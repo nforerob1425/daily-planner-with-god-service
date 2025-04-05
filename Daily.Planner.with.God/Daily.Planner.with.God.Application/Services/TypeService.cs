@@ -37,42 +37,5 @@ namespace Daily.Planner.with.God.Application.Services
                 throw;
             }
         }
-
-        public async Task<ResponseMessage<Type>> CreateTypeAsync(Type type)
-        {
-            try
-            {
-                type.Id = Guid.NewGuid();
-                return await _typeRepository.CreateAsync(type);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> UpdateTypeAsync(Type type)
-        {
-            try
-            {
-                return await _typeRepository.UpdateAsync(type);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<ResponseMessage<bool>> DeleteTypeAsync(Guid id)
-        {
-            try
-            {
-                return await _typeRepository.DeleteAsync(id);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
     }
 }
