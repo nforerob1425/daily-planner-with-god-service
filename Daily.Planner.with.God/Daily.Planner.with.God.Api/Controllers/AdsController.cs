@@ -151,7 +151,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
             }
 
-            return BadRequest();
+            return Unauthorized();
         }
 
         [HttpPut("{id}")]
@@ -171,7 +171,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 {
                     return Ok(response);
                 }
-                return BadRequest(response);
+                return Ok(response);
             }
             else
             {
@@ -196,7 +196,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 {
                     return Ok(response);
                 }
-                return BadRequest(response);
+                return Ok(response);
             }
             else
             {

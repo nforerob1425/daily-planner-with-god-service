@@ -130,7 +130,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     Success = true
                 };
 
-                return response;
+                return Ok(response);
             }
             else
             {
@@ -178,7 +178,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     Success = true
                 };
 
-                return response;
+                return Ok(response);
             }
             catch (Exception)
             {

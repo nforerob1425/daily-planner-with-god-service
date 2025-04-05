@@ -53,7 +53,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     Success = cards.Success
                 };
 
-                return response;
+                return Ok(response);
             }
             else
             {
@@ -93,7 +93,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                         response.Message = cardUpdatedData.Message;
                     }
                 }
-                return response;
+                return Ok(response);
             }
             else
             {
@@ -175,14 +175,14 @@ namespace Daily.Planner.with.God.Api.Controllers
                     var cardUpdated = await _cardService.UpdateCardAsync(card);
                     if (cardUpdated.Success)
                     {
-                        return cardUpdated;
+                        return Ok(cardUpdated);
                     }
                 }
-                return new ResponseMessage<bool>
+                return Ok(new ResponseMessage<bool>
                 {
                     Success = false,
                     Message = "Card not found"
-                };
+                });
             }
             else
             {
@@ -202,7 +202,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     return Unauthorized();
                 }
 
-                return await _cardService.DeleteCardAsync(id);
+                return Ok(await _cardService.DeleteCardAsync(id));
             }
             else
             {

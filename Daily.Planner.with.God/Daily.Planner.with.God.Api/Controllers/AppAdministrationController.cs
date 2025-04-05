@@ -42,7 +42,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var appConfigs = await _applicationConfigServices.GetApplicationConfigsAsync();
-                return appConfigs;
+                return Ok(appConfigs);
             }
             else
             {
@@ -64,7 +64,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var agendas = await _agendaService.GetAgendasAsync();
-                return agendas;
+                return Ok(agendas);
             }
             else
             {
@@ -86,7 +86,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var colorPaletts = await _colorPalettService.GetColorPalettsAsync();
-                return colorPaletts;
+                return Ok(colorPaletts);
             }
             else
             {
@@ -109,7 +109,7 @@ namespace Daily.Planner.with.God.Api.Controllers
 
                 var colorTypes = await _typeService.GetTypesAsync();
                 colorTypes.Data = colorTypes.Data.OrderBy(c => c.Name).ToList();
-                return colorTypes;
+                return Ok(colorTypes);
             }
             else
             {
@@ -150,7 +150,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     }
                 }
                 var agendaCreated = await _agendaService.CreateAgendaAsync(agenda);
-                return agendaCreated;
+                return Ok(agendaCreated);
             }
             else
             {
@@ -178,7 +178,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 };
 
                 var colorCreated = await _colorPalettService.CreateColorPalettAsync(colorPalette);
-                return colorCreated;
+                return Ok(colorCreated);
             }
             else
             {
@@ -220,7 +220,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     }
                 }
                 var updated = await _agendaService.UpdateAgendaAsync(agenda);
-                return updated;
+                return Ok(updated);
             }
             else
             {
@@ -249,7 +249,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 };
 
                 var updated = await _colorPalettService.UpdateColorPalettAsync(colorPalette);
-                return updated;
+                return Ok(updated);
             }
             else
             {
@@ -271,7 +271,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var updated = await _applicationConfigServices.UpdateApplicationConfigAsync(appConfig);
-                return updated;
+                return Ok(updated);
             }
             else
             {
@@ -293,7 +293,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var deleted = await _agendaService.DeleteAgendaAsync(agendaId);
-                return deleted;
+                return Ok(deleted);
             }
             else
             {
@@ -315,7 +315,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var deleted = await _colorPalettService.DeleteColorPalettAsync(colorPaletteId);
-                return deleted;
+                return Ok(deleted);
             }
             else
             {

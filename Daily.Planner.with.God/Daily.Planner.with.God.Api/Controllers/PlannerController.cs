@@ -66,7 +66,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 response.Success = allCards.Success;
                 response.Data = allCards.Success;
 
-                return response;
+                return Ok(response);
             }
             else
             {

@@ -8,6 +8,7 @@ namespace Daily.Planner.with.God.Application.Interfaces
 {
     public interface IUserService
     {
+        Task<List<User>> GetSheepUsersAsync(Guid leadUserId);
         Task<ResponseMessage<List<User>>> GetUsersAsync();
         Task<ResponseMessage<User?>> GetUserAsync(Guid id);
         Task<ResponseMessage<User>> CreateUserAsync(User user);

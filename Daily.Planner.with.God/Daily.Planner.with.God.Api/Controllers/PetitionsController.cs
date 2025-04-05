@@ -142,7 +142,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                         response.Message = petitionUpdatedData.Message;
                     }
                 }
-                return response;
+                return Ok(response);
             }
             else
             {

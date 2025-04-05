@@ -239,7 +239,7 @@ public class ApplicationDbContext : DbContext
             new Permission { Id = Guid.Parse("19f3b0e7-cc0b-44ba-ad7f-3ad17bcc9949"), Description = "Puede ver la vista del R07",   SystemName = "CSPV", Priority = 1 },
             new Permission { Id = Guid.Parse("1f52010f-c57c-4031-a666-4ad9c4076404"), Description = "Puede actualizar peticiones", SystemName = "CUPT", Priority = 3 },
             new Permission { Id = Guid.Parse("24395707-0c33-42fe-bc05-39bd9b5e0485"), Description = "Puede crear anuncios", SystemName = "CCNW", Priority = 3 },
-            new Permission { Id = Guid.Parse("2ad66724-24d7-4a86-b512-7cf5a4c4bfc3"), Description = "Puede asignar permisos temporales", SystemName = "CCTP", Priority = 4 },
+            new Permission { Id = Guid.Parse("2ad66724-24d7-4a86-b512-7cf5a4c4bfc3"), Description = "Puede asignar permisos temporales", SystemName = "CCTP", Priority = 5 },
             new Permission { Id = Guid.Parse("2dd17f8f-6e80-4e60-919d-e304b90d0f46"), Description = "Puede actualizar las configuraciones", SystemName = "CUCN", Priority = 3 },
             new Permission { Id = Guid.Parse("2f6a2460-7e0c-4677-a9a7-0c90ac88e2c7"), Description = "Puede eliminar peticiones", SystemName = "CDPT", Priority = 2 },
             new Permission { Id = Guid.Parse("348f5ae9-8ee7-40e1-bd13-0166e437ed1b"), Description = "Puede eliminar colores", SystemName = "CDCO", Priority = 4 },
@@ -265,7 +265,7 @@ public class ApplicationDbContext : DbContext
             new Permission { Id = Guid.Parse("929d0a6d-6b2d-4391-aa79-c4859b9cfa57"), Description = "Puede eliminar agendas", SystemName = "CDAG", Priority = 4 },
             new Permission { Id = Guid.Parse("a4f2229d-cd70-4c4f-a0fa-39e2f9e4a639"), Description = "Puede ver los usuarios", SystemName = "CSUS", Priority = 2 },
             new Permission { Id = Guid.Parse("b3deaccb-bd01-4cd6-a543-9a001a93101c"), Description = "Puede ver las peticiones", SystemName = "CSPT", Priority = 2 },
-            new Permission { Id = Guid.Parse("ba75c802-413c-4209-abb5-d92fe883061c"), Description = "Puede desasignar permisos temporales", SystemName = "CDTP", Priority = 4 },
+            new Permission { Id = Guid.Parse("ba75c802-413c-4209-abb5-d92fe883061c"), Description = "Puede desasignar permisos temporales", SystemName = "CDTP", Priority = 5 },
             new Permission { Id = Guid.Parse("bbb2b3dc-b3a5-4ce4-811c-7750cba00c59"), Description = "Puede eliminar notas", SystemName = "CDNT", Priority = 2 },
             new Permission { Id = Guid.Parse("c7f65971-5dcf-45e8-b146-3df6a710df2c"), Description = "Puede eliminar sus anuncios", SystemName = "CDNW", Priority = 3 },
             new Permission { Id = Guid.Parse("cbd3a20b-a12a-437d-b130-ef77cb174edf"), Description = "Puede ver la vista de las Configuraciones", SystemName = "CSCV", Priority = 3 },
@@ -347,7 +347,7 @@ public class ApplicationDbContext : DbContext
                 LastName = "Admin",
                 Email = "SuperAdmin@dev.com",
                 ConfigurationId = Guid.Parse("ed187966-ffc8-4897-becc-619cfe584445"),
-                LeadId = null,
+                LeadId = Guid.Parse("672a5cb2-73fb-4f4c-8764-a6c104a3062d"),
                 IsMale = true,
             }
         );

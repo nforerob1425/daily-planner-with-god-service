@@ -46,7 +46,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 {
                     return Ok(response);
                 }
-                return BadRequest(response);
+                return Ok(response);
             }
             else
             {
@@ -85,7 +85,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     response.Message = userUpdated.Message;
                     response.Data = userUpdated.Data;
                 }
-                return response;
+                return Ok(response);
             }
             else
             {
@@ -105,10 +105,18 @@ namespace Daily.Planner.with.God.Api.Controllers
                     return Unauthorized();
                 }
 
+                var currentUserData = await _userService.GetUserAsync(userIdToValid);
+
                 var userData = await _userService.GetUserByUsernameAsync(user.Username);
                 if (userData != null)
                 {
-                    return BadRequest("Este nombre de usuario ya está en uso");
+                    var badResponse = new ResponseMessage<User>()
+                    {
+                        Success = false,
+                        Message = "Este nombre de usuario ya está en uso",
+                        Data = null
+                    };
+                    return Ok(badResponse);
                 }
 
 
@@ -128,6 +136,20 @@ namespace Daily.Planner.with.God.Api.Controllers
                 {
                     userCreated.Role = roleData.Data;
                     userCreated.RoleId = roleData.Data.Id;
+
+                    if (userCreated.Role.Name == "Admin")
+                    {
+                        if(currentUserData.Data.RoleId != userCreated.RoleId)
+                        {
+                            var badResponse = new ResponseMessage<User>()
+                            {
+                                Success = false,
+                                Message = "No tienes permisos para crear un usuario con este rol",
+                                Data = null
+                            };
+                            return Ok(badResponse);
+                        }
+                    }
                 }
 
                 var configurationData = await _configurationService.GetConfigurationsAsync();
@@ -153,7 +175,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 {
                     return Ok(response);
                 }
-                return BadRequest(response);
+                return Ok(response);
             }
             else
             {
@@ -194,6 +216,11 @@ namespace Daily.Planner.with.God.Api.Controllers
                             currentUserData.Data.Lead = leadData.Data;
                         }
                     }
+                    else
+                    {
+                        currentUserData.Data.LeadId = null;
+                        currentUserData.Data.Lead = null;
+                    }
 
                     currentUserData.Data.Username = user.Username;
                     currentUserData.Data.FirstName = user.FirstName;
@@ -207,7 +234,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 {
                     return Ok(response);
                 }
-                return BadRequest(response);
+                return Ok(response);
             }
             else
             {
@@ -230,6 +257,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 var cards = await _cardService.GetCardsAsync(userId);
                 var notes = await _noteService.GetNotesAsync(userId);
                 var adds = await _adsService.GetAdsByUserIdAsync(userId);
+                var userSheepsData = await _userService.GetSheepUsersAsync(userId);
 
                 var response = new ResponseMessage<bool>()
                 {
@@ -238,7 +266,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     Data = false
                 };
 
-                if (cards.Success && notes.Success && adds.Success)
+                if (cards.Success && notes.Success && adds.Success && userSheepsData != null)
                 {
                     foreach (var card in cards.Data)
                     {
@@ -255,6 +283,13 @@ namespace Daily.Planner.with.God.Api.Controllers
                         await _adsService.DeleteAdAsync(add.Id);
                     }
 
+                    foreach (var userSheep in userSheepsData)
+                    {
+                        userSheep.LeadId = null;
+                        userSheep.Lead = null;
+                        await _userService.UpdateUserAsync(userSheep);
+                    }
+
                     response = await _userService.DeleteUserAsync(userId);
 
                     if (response.Success)
@@ -262,7 +297,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                         return Ok(response);
                     }
                 }
-                return BadRequest(response);
+                return Ok(response);
             }
             else
             {

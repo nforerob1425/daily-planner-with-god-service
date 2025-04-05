@@ -81,7 +81,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var createdData = await _temporalPermissionService.CreateAsync(tp);
-                return createdData;
+                return Ok(createdData);
             }
             else
             {
@@ -102,7 +102,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var deletedData = await _temporalPermissionService.DeleteAsync(tpId);
-                return deletedData;
+                return Ok(deletedData);
             }
             else
             {

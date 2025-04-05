@@ -80,7 +80,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var updatedData = await _noteService.UpdateNoteAsync(note);
-                return updatedData;
+                return Ok(updatedData);
             }
             else
             {
@@ -114,7 +114,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var createdData = await _noteService.CreateNoteAsync(note);
-                return createdData;
+                return Ok(createdData);
             }
             else
             {
@@ -135,7 +135,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                 }
 
                 var deletedData = await _noteService.DeleteNoteAsync(noteId);
-                return deletedData;
+                return Ok(deletedData);
             }
             else
             {

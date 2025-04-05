@@ -68,7 +68,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     return Ok(response);
 
                 }
-                return NotFound(originColorPaletts);
+                return Ok(originColorPaletts);
             }
             else
             {

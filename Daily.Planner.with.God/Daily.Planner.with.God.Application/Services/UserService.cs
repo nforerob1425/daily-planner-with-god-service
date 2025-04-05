@@ -161,5 +161,18 @@ namespace Daily.Planner.with.God.Application.Services
                 throw;
             }
         }
+
+        public async Task<List<User>> GetSheepUsersAsync(Guid leadUserId)
+        {
+            try
+            {
+                return await _userRepository.GetSheepUsersAsync(leadUserId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

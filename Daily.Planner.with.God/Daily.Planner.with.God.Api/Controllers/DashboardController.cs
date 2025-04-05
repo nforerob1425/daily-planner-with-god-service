@@ -150,7 +150,7 @@ namespace Daily.Planner.with.God.Api.Controllers
                     response.Data.TotalAds = adsData.Data.Count;
                 }
 
-                return response;
+                return Ok(response);
             }
             else
             {
